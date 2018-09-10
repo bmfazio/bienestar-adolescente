@@ -1,9 +1,25 @@
----[1]
-Organizaciones a revisar:
-OPS, OMS, OIT, Unicef
+---[3]
+> capitulo 2: mapeo de informacion (boris)
+- partiendo de 5x5+5
+- bases con que nivel de desagregacion y regularidad
+- ademas, contexto peru en base a literatura revisada
+- bases adicionales
 
-Entender temas del correo de Maria Eugenia
+INTRO:
 
+- Desarrollar politicas en pro del bienestar y desarrollo adolescente es importante
+	- Por que importa
+	- Que falta
+
+- Para desarrollar politicas efectivas es necesario disponer de informacion para diagnosticar, monitorear y evaluar
+	- Mencionar propuestas previas (Lancet, algo de la EU?)
+	- Describir propuesta Unicef, enfatizar que identifica 5 dimensiones de forma explicita
+	1>: la literatura (deberia) refleja dimensiones que son importantes para el bienestar, esto es capturado por propuestas inclu 5x5+5
+	2>: en Peru han habido esfuerzos por medir indicadores relacionados a estas dimensiones
+		> dar ejemplos de institucion y las encuestas/estudios que ha realizado
+	3>: tomando en cuenta la necesidad de medicion regular y representativa, presentamos las fuentes que podrian ser de utilidad
+		> ENDES, ENAHO, etc.
+	
 ---[2]
 - Revisión y sistematización de evidencia
 	1. Revisar ideas principales de los papers y libro
@@ -16,4 +32,8 @@ Entender temas del correo de Maria Eugenia
 - Propuesta de indicadores 5x5+ e índice compuesto de desarrollo y bienestar adolescente
 - Informe de indicadores 5x5+ y validación
 
----[3]
+---[1]
+Organizaciones a revisar:
+OPS, OMS, OIT, Unicef
+
+Entender temas del correo de Maria Eugenia
