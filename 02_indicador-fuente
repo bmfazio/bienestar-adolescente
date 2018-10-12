@@ -1,0 +1,121 @@
+? de Pablo, no creo que sirva
+* sugerencia mia
+
+--SALUD--
+Tasa de mortalidad
+  OMS/RENIEC/SINADEF*
+Tasa de mortalidad por suicidio
+  OMS/RENIEC/SINADEF*
+Muertes relacionadas al sida o nuevas infecciones por VIH
+  CDC
+  OMS/RENIEC/SINADEF*
+Tasa de mortalidad por accidentes de tránsito
+  OMS/RENIEC/SINADEF*
+Tasa de mortalidad materna
+  CDC
+  OMS/RENIEC/SINADEF*
+Tasa de fertilidad adolescente
+  CNV
+  ENDES
+Prevalencia de desnutricion o sobrepeso
+  CENAN?
+  ENAHO
+  ENDES*
+Consumo de alcohol
+  ENDES
+  GSHS
+Prevalencia de la anemia
+  CENAN?
+  ENAHO
+  ENDES*
+Anticoncepción (necesidad satisfecha)
+  ENDES
+Uso de condon
+  ENDES
+Uso de Tabaco
+  ENDES
+  GSHS
+Prevalencia de depresion/ansiedad
+  MINSA-HIS
+  GSHS
+
+--EDUCACION--
+Nivel de competencia lectura/matematicas
+  ECE
+  PISA
+Habilidad TICs
+  PISA
+Tasa de finalización de educación primaria y tasa de finalización de secundaria
+  ENAHO
+Tasa de adolescentes fuera del Sistema educativo (out-of-school rate)
+  SIAGIE
+  ENAHO*
+Indicador de aspiraciones educativas
+  algo vi*
+Tasa de matrícula bruta en educación superior
+  ENAHO
+
+--PROTECCION--
+Porcentaje de mujeres entre 20 y 24 años alguna vez unidas antes de los 15 años y antes de los 18 años
+  ENDES
+Tasa de homicidio doloso
+  CEIC / Registro nacional de denuncias*
+  RENIEC/OMS/SINADEF*
+Porcentaje de adolescentes que han experimentado violencia física, sexual o emocional por parte de una pareja
+  ENDES
+Porcentaje de adolescentes que han experimentado violencia
+  ENARES
+Porcentaje de adolescentes que reportaron ser víctimas de bullying
+  ENDES
+  GSHS
+Proporción de adolescentes en pobreza multi-dimensional
+  ENAHO
+Tasa de denuncia de violencia doméstica
+  ENDES
+  Registro denuncias
+Porcentaje de adolescentes que experimentan una conexión y regulación positiva
+  GSHS
+Violencia sexual ejercida por otra persona que no es su pareja
+  ENARES
+
+--OPORTUNIDADES ECONOMICAS--
+Porcentaje de adolescentes involucrados en trabajo infantil
+  ETI
+  ENAHO
+Tiempo dedicado a tareas del hogar (no remunerado)
+  ETI
+  ENUT
+% of 15-19 year-olds enrolled in TVET
+  SIAGIE*
+Porcentaje de adolescentes sin educación, empleo o formación (NEET)
+  ENAHO
+Tasa de desempleo adolescente
+  ENAHO
+Porcentaje de adolescentes con conocimientos básicos financieros y tenencia de ahorros
+  PISA
+Proporción de adolescentes entre 15-19 por debajo de la línea internacional de la pobreza
+  ENAHO
+
+--PARTICIPACION--
+Porcentaje de estudiantes que respaldan valores y actitudes que promueven la igualdad, confianza y participación en gobernabilidad
+  Encuesta Nacional de Juventud*
+  Estudio Internacional de Educación Cívica y Ciudadanía*
+  ENAHO*
+  ENARES*
+Porcentaje de adolescentes que tienen derecho a voto en las elecciones generales
+  JNE
+Participación de adolescentes en sindicatos
+  ENUT
+Porcentaje de adolescentes que indican que su opinión fue considerada para las decisiones del hogar, del colegio y de la comunidad
+  ENARES*
+  Encuesta Nacional Especializada de Trabajo Infantil*
+Porcentaje de adolescentes que participan en actividades recreacionales o sociales por un periodo específico durante el día o la semana
+  ENUT
+Indicador de voluntariado
+  ENUT
+Porcentaje de adolescentes que usaron el internet en el último mes
+  ENAHO
+Participación en movimientos formales y no formales
+  ENUT
+  Encuesta Nacional de Juventud*
+  Estudio Internacional de Educación Cívica y Ciudadanía*
