@@ -1,18 +1,5 @@
-# ENDES
-#   Tasa de fertilidad adolescente
-#   Prevalencia de desnutricion o sobrepeso
-#   Consumo de alcohol
-#   Prevalencia de la anemia
-#   Anticoncepción (necesidad satisfecha)
-#   Uso de condon
-#   Uso de Tabaco
-#   Porcentaje de mujeres entre 20 y 24 años alguna vez unidas antes de los 15 años y antes de los 18 años
-#   Porcentaje de adolescentes que han experimentado violencia física, sexual o emocional por parte de una pareja
-#   Porcentaje de adolescentes que reportaron ser víctimas de bullying
-#   Tasa de denuncia de violencia doméstica
-
 library(rio);library(data.table);library(magrittr);library(survey)
-### ENDES
+### Cargar ENDES
 ## Respondent's basic data
 rec0111 <- import("../source/endes/2017/Modulo66/REC0111.SAV", setclass = "data.table")
 ## Reproduction/Contraception
@@ -33,37 +20,53 @@ rec83 <- import("../source/endes/2017/Modulo73/REC83.SAV", setclass = "data.tabl
 ## Violencia domestica
 rec84dv <- import("../source/endes/2017/Modulo73/REC84DV.SAV", setclass = "data.table")
 
-# Tasa de fertilidad adolescente
-  # Pablo menciona natalidad en el documento:
-  # La tasa de natalidad adolescente mide el número de nacimientos entre mujeres de 15-19 años por cada 1,000 mujeres en la misma cohorte.
-dsalud.natalidad <- (rec0111[V013==1] %>% merge(re223132, by = "CASEID", all.x = T))[,.(peso=V005,
-                                                                                        nhijos=V201)]
+# ENDES
+#   Prevalencia de desnutricion o sobrepeso
+#   Prevalencia de la anemia
+#   Porcentaje de mujeres entre 20 y 24 años alguna vez unidas antes de los 15 años y antes de los 18 años
+#   Tasa de denuncia de violencia doméstica
+#   >Tasa de fertilidad adolescente
+#   >Consumo de alcohol
+#   >Anticoncepción (necesidad satisfecha)
+#   >Uso de condon
+#   >Uso de Tabaco
+#   >Porcentaje de adolescentes que han experimentado violencia física, sexual o emocional por parte de una pareja
+#   >Porcentaje de adolescentes que reportaron ser víctimas de bullying
 
-# Consumo de alcohol (15-19)
+#> Tasa de fertilidad adolescente (en realidad es tasa de natalidad)
+(rec0111 %>%
+    merge(re223132, by = "CASEID", all.x = T))[,.(estrato.region=V023, estrato.urbrur=V022, psuid=V021,
+                                                  peso=V005/10**6,
+                                                  gedad=V013, nhijos=V201)] %>%
+  svydesign(id=~psuid, strat=~estrato.region+estrato.urbrur, weight=~peso, data=.) %>%
+  subset(gedad==1) %>%
+  svymean(~nhijos, .) -> dsalud.natalidad
+
+#> Consumo de alcohol (15-19)
 dsalud.alcohol <- csalud01[QS23>=15 & QS23<=19,.(peso=PESO15_AMAS, QHCLUSTER, QHNUMBER, QHHOME, QSNUMERO, QSSEXO,
                                                  alc.vida=2-QS206, alc.ano=2-QS208, alc.12v=2-QS209, alc.30d=2-QS210)]
 dsalud.alcohol[alc.12v<0,alc.12v:=NA]
 
-# Anticoncepción (necesidad satisfecha, cualquier metodo)
+#> Anticoncepción (necesidad satisfecha, cualquier metodo)
 dsalud.anticoncept <- (rec0111[V013==1] %>%
                          merge(re223132, by = "CASEID", all.x = T) %>%
                          merge(re516171, by = "CASEID", all.x = T))[V525>0,.(peso=V005,
                                                                              antic.moderno=as.numeric(V364==1),
                                                                              antic.modotra=as.numeric(V364<=2))]
 
-# Uso de condon
+#> Uso de condon
 dsalud.condon <- (rec0111[V013==1] %>%
                     merge(re516171, by = "CASEID", all.x = T) %>%
                     merge(re758081, by = "CASEID", all.x = T))[V525>0,.(peso=V005,
                                                                         condon=V761)]
 
-# Uso de Tabaco
+#> Uso de Tabaco
 dsalud.tabaco <- csalud01[QS23>=15 & QS23<=19,.(peso=PESO15_AMAS, QHCLUSTER, QHNUMBER, QHHOME, QSNUMERO, QSSEXO,
                                                 tabaco.ano=2-QS200, tabaco.30d=2-QS201)]
 dsalud.tabaco[tabaco.ano<0,tabaco.ano:=NA]
 dsalud.tabaco[tabaco.30d<0,tabaco.30d:=NA]
 
-# Porcentaje de adolescentes que han experimentado violencia física, sexual o emocional por parte de una pareja
+#> Porcentaje de adolescentes que han experimentado violencia física, sexual o emocional por parte de una pareja
 dprote.pviolen <- (rec0111[V013==1] %>%
                      merge(rec84dv, by = "CASEID", all.x = T))[,.(peso=V005,
                                                                   v.emocional=D104, v.fisica=D106, v.fisicagrave=D107, v.sexual=D108)]
