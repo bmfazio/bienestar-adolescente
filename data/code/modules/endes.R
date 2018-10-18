@@ -23,7 +23,7 @@ rec83 <- import("../source/endes/2017/Modulo73/REC83.SAV", setclass = "data.tabl
 rec84dv <- import("../source/endes/2017/Modulo73/REC84DV.SAV", setclass = "data.table")
 
 # ENDES
-#   ? Primero ver ENAHO - Prevalencia de desnutricion o sobrepeso
+#   FALTA: Prevalencia de desnutricion o sobrepeso
 #   ?? No sale nada util donde deberia - Tasa de denuncia de violencia doméstica
 #   >Prevalencia de la anemia
 #   >Tasa de fertilidad adolescente
@@ -60,20 +60,25 @@ rec84dv <- import("../source/endes/2017/Modulo73/REC84DV.SAV", setclass = "data.
                                                  ultsex.condon=case_when(V761 == 8 ~ NA_real_, TRUE ~ V761),
                                                  v.emoc=D104, v.fisi=D106, v.fisigrav=D107,v.sex=D108,
                                                  edad.matri=V511,
-                                                 anemia=as.numeric(V457<4))] %>%
+                                                 anemia=as.numeric(V457<4),
+                                                 imc=ifelse(V445 == 9998, NA, V445))] %>%
   svydesign(id=~psuid, strat=~estrato.region+estrato.urbrur, weight=~peso, data=.) -> dmujer
 
-dmujer %>% subset(as.numeric(gedad)==1) %>% svymean(~nhijos, .)
-dmujer %>% subset(as.numeric(gedad)==1) %>% svyciprop(~antic.moderno, .)
-dmujer %>% subset(as.numeric(gedad)==1) %>% svyciprop(~antic.modotra, .)
-dmujer %>% subset(as.numeric(gedad)==1&inisex>0) %>% svyciprop(~ultsex.condon, .)
-dmujer %>% subset(as.numeric(gedad)==1) %>% svyciprop(~v.emoc, .)
-dmujer %>% subset(as.numeric(gedad)==1) %>% svyciprop(~v.fisi, .)
-dmujer %>% subset(as.numeric(gedad)==1) %>% svyciprop(~v.fisigrav, .)
-dmujer %>% subset(as.numeric(gedad)==1) %>% svyciprop(~v.sex, .)
-dmujer %>% subset(as.numeric(gedad)==2) %>% svyciprop(~I(edad.matri<15), .)
-dmujer %>% subset(as.numeric(gedad)==2) %>% svyciprop(~I(edad.matri<18), .)
-dmujer %>% subset(as.numeric(gedad)==1) %>% svyciprop(~anemia, .)
+
+# list(
+#   dmujer %>% subset(as.numeric(gedad) == 1) %>% svymean( ~ nhijos, .),
+#   dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ antic.moderno, .),
+#   dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ antic.modotra, .),
+#   dmujer %>% subset(as.numeric(gedad) == 1 & inisex > 0) %>% svyciprop( ~ ultsex.condon, .),
+#   dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ v.emoc, .),
+#   dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ v.fisi, .),
+#   dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ v.fisigrav, .),
+#   dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ v.sex, .),
+#   dmujer %>% subset(as.numeric(gedad) == 2) %>% svyciprop( ~ I(edad.matri < 15), .),
+#   dmujer %>% subset(as.numeric(gedad) == 2) %>% svyciprop( ~ I(edad.matri < 18), .),
+#   dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ anemia, .),
+#   dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ I(imc<1850|2500<imc), .)
+# )
   # Para despues:
   #svyby(~nhijos, ~estrato.region, design = dsalud.natalidad, svymean, na.rm = T)
   #svyby(~nhijos, ~estrato.region, design = subset(dsalud.natalidad, !is.na(nhijos)), svymean)
@@ -94,14 +99,82 @@ dmujer %>% subset(as.numeric(gedad)==1) %>% svyciprop(~anemia, .)
                                                v.golpe=as.numeric(QS710>1), v.arma=as.numeric(QS711>1))] %>%
   svydesign(id=~psuid, strat=~estrato.region+estrato.urbrur, weight=~peso, data=.) -> dsalud
 
-dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.vida, .)
-dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.anho, .)
-dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.12va, .)
-dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.30d , .)
-dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~tabaco.anho, .)
-dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~tabaco.30d , .)
-  # pocas respuestas, tipo de violencia mas restringida pero incluye hombre
-dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~v.golpe, .)
-dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~v.arma, .)
+# dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.vida, .)
+# dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.anho, .)
+# dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.12va, .)
+# dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.30d , .)
+# dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~tabaco.anho, .)
+# dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~tabaco.30d , .)
+#   # pocas respuestas, tipo de violencia mas restringida pero incluye hombre
+# dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~v.golpe, .)
+# dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~v.arma, .)
+# # X primero ENAHO - Prevalencia de desnutricion o sobrepeso
 
-# X primero ENAHO - Prevalencia de desnutricion o sobrepeso
+svy2pci <- function(x) {
+  xclass <- attr(x, "class")
+  if(is.null(xclass)){
+    stop("WRONG!")
+  } else if(xclass == "svyciprop"){
+    xci <- attr(x, "ci")
+    c(as.vector(x), xci[1], xci[2])
+  } else if(xclass == "svystat"){
+    xsd <- sqrt(attr(x, "var"))
+    z <- qnorm(0.975)
+    as.vector(x) + c(0, -z*xsd, z*xsd)
+  } else {
+    stop("o_O")
+  }
+}
+
+list(
+  dmujer %>% subset(as.numeric(gedad) == 1) %>% svymean( ~ nhijos, .),
+  dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ antic.moderno, .),
+  dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ antic.modotra, .),
+  dmujer %>% subset(as.numeric(gedad) == 1 & inisex > 0) %>% svyciprop( ~ ultsex.condon, .),
+  dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ v.emoc, .),
+  dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ v.fisi, .),
+  dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ v.fisigrav, .),
+  dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ v.sex, .),
+  dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ I(v.emoc==1|v.sex==1|v.fisi==1|v.fisigrav==1), .),
+  dmujer %>% subset(as.numeric(gedad) == 2) %>% svyciprop( ~ I(edad.matri < 15), .),
+  dmujer %>% subset(as.numeric(gedad) == 2) %>% svyciprop( ~ I(edad.matri < 18), .),
+  dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ anemia, .),
+  dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ I(imc<1850|2500<imc), .),
+  dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.vida, .),
+  dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.anho, .),
+  dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.12va, .),
+  dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.30d , .),
+  dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~tabaco.anho, .),
+  dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~tabaco.30d , .)
+) %>% lapply(svy2pci) %>% do.call(rbind, .) -> tmp.estimates
+
+colnames(tmp.estimates) <- c("valor", "CI95.Inf", "CI95.Sup")
+
+indnom <- c(
+  "Nacidos vivos / 1000 mujeres 15-19",
+  "% mujeres 15-19 usa anticonceptivo moderno",
+  "% mujeres 15-19 usa anticonceptivo moderno o tradicional",
+  "% mujeres 15-19 uso condon en ultimo encuentro sexual",
+  "% mujeres 15-19 experimento violencia emocional",
+  "% mujeres 15-19 experimento violencia fisica leve",
+  "% mujeres 15-19 experimento violencia fisica grave",
+  "% mujeres 15-19 experimento violencia sexual",
+  "% mujeres 15-19 experimento cualquier violencia",
+  "% mujeres 20-24 unidas antes de los 15",
+  "% mujeres 20-24 unidas antes de los 18",
+  "% mujeres 15-19 con anemia",
+  "% mujeres 15-19 con bajo peso/sobre peso",
+  "% personas 15-19 han consumido alcohol en su vida",
+  "% personas 15-19 han consumido alcohol en ultimos 12 meses",
+  "% personas 15-19 han consumido alcohol >=12 veces en ultimos 12 meses",
+  "% personas 15-19 han consumido alcohol en ultimos 30 dias",
+  "% personas 15-19 han consumido tabaco en ultimos 12 meses",
+  "% personas 15-19 han consumido tabaco en ultimos 30 dias"
+)
+
+cbind(indnom,
+      data.frame(round(tmp.estimates*c(1000,rep(100,nrow(tmp.estimates)-1)),2)),
+      fuente = "ENDES 2017") -> tab.endes
+
+
+###
