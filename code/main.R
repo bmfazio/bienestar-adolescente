@@ -1,10 +1,7 @@
-#Bases que necesitare:
-# [ ] SIAGIE
-# [ ] SINADEF
-# [ ] CDC
-# [ ] CNV
-# [ ] HIS
-# 
+library(rio);library(data.table);library(dplyr);library(survey)
+
+source("modules/config.R")
+source("modules/endes.R")
 
 # [mas reciente]
 # [2015] ENARES
@@ -13,20 +10,21 @@
 # .[2017] ENAHO
 # >[2017] ENDES
 # >[2017] Registro Denuncias (poquisima data, dudo que sea util)
+
+# Me falta conseguir:
 # [ ] GSHS
 # [ ] PISA
 # [ ] CENAN
 # [ ] ECE
 
-putlabel <- function(x) {
-  if(is.null(attr(x,"labels"))){
-    stop("No 'labels' attribute")
-  } else {
-    return(factor(x, levels = attr(x,"labels"), labels = names(attr(x,"labels"))))
-  }
-}
+#Bases que necesitare:
+# [ ] SIAGIE
+# [ ] SINADEF
+# [ ] CDC
+# [ ] CNV
+# [ ] HIS
+# 
 
-source("modules/endes.R")
 
-library(googlesheets)
+#library(googlesheets)
 #gs_new("ENDES-tab", ws_title = "Indicadores ENDES 2017", input = tab.endes, trim = TRUE)

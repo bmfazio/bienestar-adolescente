@@ -1,0 +1,41 @@
+# Load the appropriate folder paths depending
+# on where code is being run from
+data.table(places = "Linux|bmfazio-pc|x86_64|bmfazio", path = "/home/bmfazio/Documents/datasets")[
+  places == paste(Sys.info()[c(1,4:6)], collapse = "|"), path] -> datadir
+
+  # ENDES subdir
+if(length(datadir) == 1 & any(dir.exists(datadir))){
+  endesdir <- paste0(datadir, "/inei/endes/")
+}
+
+# Apply labels to categorical vars imported
+# from other data formats
+putlabel <- function(x) {
+  if (is.null(attr(x, "labels"))) {
+    stop("No 'labels' attribute")
+  } else {
+    return(factor(
+      x,
+      levels = attr(x, "labels"),
+      labels = names(attr(x, "labels"))
+    ))
+  }
+}
+
+# Transform svy mean and proportion CI estimate objects
+# into a simple 3-vector
+svy2pci <- function(x) {
+  xclass <- attr(x, "class")
+  if (is.null(xclass)) {
+    stop("WRONG!")
+  } else if (xclass == "svyciprop") {
+    xci <- attr(x, "ci")
+    c(as.vector(x), xci[1], xci[2])
+  } else if (xclass == "svystat") {
+    xsd <- sqrt(attr(x, "var"))
+    z <- qnorm(0.975)
+    as.vector(x) + c(0, -z*xsd, z*xsd)
+  } else {
+    stop("o_O")
+  }
+}
