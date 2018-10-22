@@ -5,7 +5,7 @@ data.table(places = "Linux|bmfazio-pc|x86_64|bmfazio", path = "/home/bmfazio/Doc
 
   # ENDES subdir
 if(length(datadir) == 1 & any(dir.exists(datadir))){
-  endesdir <- paste0(datadir, "/inei/endes/")
+  ineidir <- paste0(datadir, "/inei/")
 }
 
 # Apply labels to categorical vars imported
@@ -39,3 +39,6 @@ svy2pci <- function(x) {
     stop("o_O")
   }
 }
+
+# Fixing issue with svyciprop
+body(svyciprop)[[6]] <- substitute(names(rval) <- paste(deparse(formula[[2]]),collapse=""))
