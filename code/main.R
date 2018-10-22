@@ -2,14 +2,15 @@ library(rio);library(data.table);library(dplyr);library(survey)
 
 source("modules/config.R")
 source("modules/endes.R")
+source("modules/enares.R")
 
 # [NUMERO: anho mas reciente]
-# [2015] ENARES
-# [2015] ETI
 # [2010] ENUT
+# [2015] ETI
 # .[2017] ENAHO
+# >[2015] ENARES
 # >[2017] ENDES
-# >[2017] Registro Denuncias (poquisima data, dudo que sea util)
+# >X[2017] Registro Denuncias (poquisima data, dudo que sea util)
 
 # Me falta conseguir (y son conseguibles, creo):
 # [ ] GSHS

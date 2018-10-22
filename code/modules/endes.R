@@ -38,7 +38,7 @@ out.endes <- function() {
                                                    edad.matri=V511,
                                                    anemia=as.numeric(V457<4),
                                                    imc=ifelse(V445 == 9998, NA, V445))] %>%
-    svydesign(id=~psuid, strat=~estrato.region+estrato.urbrur, weight=~peso, data=.) -> dmujer
+    svydesign(ids=~psuid, strata=~estrato.region+estrato.urbrur, weights=~peso, data=.) -> dmujer
   
   # Encuesta salud, mujer y hombre
   (csalud01 %>%
@@ -53,7 +53,7 @@ out.endes <- function() {
                                                  tabaco.anho=case_when(QS200 == 1 ~ 1, QS200 == 2 ~ 0, TRUE ~ NA_real_),
                                                  tabaco.30d =case_when(QS201 == 1 ~ 1, QS200 == 2 | QS201 == 2 ~ 0, TRUE ~ NA_real_),
                                                  v.golpe=as.numeric(QS710>1), v.arma=as.numeric(QS711>1))] %>%
-    svydesign(id=~psuid, strat=~estrato.region+estrato.urbrur, weight=~peso, data=.) -> dsalud
+    svydesign(ids=~psuid, strata=~estrato.region+estrato.urbrur, weights=~peso, data=.) -> dsalud
   
   list(
     dmujer %>% subset(as.numeric(gedad) == 1) %>% svymean( ~ nhijos, .),

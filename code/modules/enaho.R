@@ -44,7 +44,7 @@ enaho01.200[,.(id, psu=CONGLOME, stratum=ESTRATO, weight=FACPOB07,
                                    (2-P5048)%+rmna%(2-P5049)%+rmna%(2-P50410)%+rmna%(2-P50411)),
                         trab500.tiempo=max(ifelse(is.na(P513T),0,P513T)+ifelse(is.na(P518),0,P518), P520, na.rm=T)
                         )], by="id", all.x = TRUE) %>%
-  svydesign(id=~psu, strat=~stratum, weight=~weight, data=.) -> denaho
+  svydesign(ids=~psu, strata=~stratum, weights=~weight, data=.) -> denaho
 
 # Porcentaje de adolescentes que usaron el internet en el último mes
 denaho %>% subset(10<=edad&edad<=19) %>% svyciprop(~internet.ultmes, .)
