@@ -42,3 +42,10 @@ svy2pci <- function(x) {
 
 # Fixing issue with svyciprop
 body(svyciprop)[[6]] <- substitute(names(rval) <- paste(deparse(formula[[2]]),collapse=""))
+
+# Summing omitted questions
+`%+rmna%` <- function(x, y) {
+  x <- ifelse(is.na(x),0,x)
+  y <- ifelse(is.na(y),0,y)
+  x+y
+}
