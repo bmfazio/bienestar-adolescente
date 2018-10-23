@@ -49,13 +49,6 @@ OMS/RENIEC/SINADEF*
   Tasa de mortalidad materna
   Tasa de homicidio doloso
 
-CDC
-  Muertes relacionadas al sida o nuevas infecciones por VIH
-  Tasa de mortalidad materna
-
-CNV
-  Tasa de fertilidad adolescente
-
 CENAN?
   Prevalencia de desnutricion o sobrepeso
   Prevalencia de la anemia
@@ -67,9 +60,6 @@ GSHS
   Porcentaje de adolescentes que reportaron ser víctimas de bullying
   Porcentaje de adolescentes que experimentan una conexión y regulación positiva
 
-MINSA-HIS
-  Prevalencia de depresion/ansiedad
-
 ECE
   Nivel de competencia lectura/matematicas
 
@@ -77,11 +67,6 @@ PISA
   Nivel de competencia lectura/matematicas
   Habilidad TICs
   Porcentaje de adolescentes con conocimientos básicos financieros y tenencia de ahorros
-
-SIAGIE
-  Tasa de adolescentes fuera del Sistema educativo (out-of-school rate)
-  % of 15-19 year-olds enrolled in TVET*
-
 
 Indicador de aspiraciones educativas?
 
@@ -92,8 +77,6 @@ Porcentaje de estudiantes que respaldan valores y actitudes que promueven la igu
   ENAHO*
   ENARES*
 
-Porcentaje de adolescentes que tienen derecho a voto en las elecciones generales
-  JNE
 
 Porcentaje de adolescentes que indican que su opinión fue considerada para las decisiones del hogar, del colegio y de la comunidad
   ENARES*
@@ -103,3 +86,4 @@ Participación en movimientos formales y no formales
   ENUT
   Encuesta Nacional de Juventud*
   Estudio Internacional de Educación Cívica y Ciudadanía*
+
