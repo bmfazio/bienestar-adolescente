@@ -3,20 +3,20 @@ library(rio);library(data.table);library(dplyr);library(survey)
 source("modules/config.R")
 
 source("modules/endes.R")
+source("modules/enaho.R")
 source("modules/enares.R")
 source("modules/eti.R")
 
 # [NUMERO: anho mas reciente]
-# [2010] ENUT
-  # Tiempo dedicado a tareas del hogar (no remunerado)
-  # Participación de adolescentes en sindicatos
-  # Porcentaje de adolescentes que participan en actividades recreacionales o sociales por un periodo específico durante el día o la semana
-  # Indicador de voluntariado
-  # Participación en movimientos formales y no formales
+
 # .[2017] ENAHO
 # >[2015] ENARES
 # >[2017] ENDES
 # >[2015] ETI
+# >[2010] ENUT
+  # % adolescentes que participan en actividades recreacionales/sociales por un periodo específico durante el día o la semana
+  # Indicador de voluntariado
+  # Participación en movimientos formales y no formales
 # >X[2017] Registro Denuncias (poquisima data, dudo que sea util)
 
 # Me falta conseguir (y son conseguibles, creo):

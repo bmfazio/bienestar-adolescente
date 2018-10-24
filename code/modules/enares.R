@@ -47,3 +47,5 @@ cbind(indnom,
 }
 
 out.enares <- out.enares()
+
+######### Falta considerar violencia en albergue/hogar
