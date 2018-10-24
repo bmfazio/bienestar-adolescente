@@ -6,6 +6,15 @@ source("modules/endes.R")
 source("modules/enaho.R")
 source("modules/enares.R")
 source("modules/eti.R")
+source("modules/enut.R")
+
+list(out.endes,
+     out.enaho,
+     out.enares,
+     out.eti,
+     out.enut) -> output.main
+
+saveRDS(output.main, file = "output/mainOutput.rds")
 
 # [NUMERO: anho mas reciente]
 

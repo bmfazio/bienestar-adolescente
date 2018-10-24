@@ -26,7 +26,7 @@ out.enaho <- function() {
                           educ.aprobado=P301A,
                           educ.ultanho=P304A,
                           educ.esteanho=P308A,
-                          #educ.tvet=as.numeric(P313==8&!is.na(P313)), # no sirve, muy poca info
+                          educ.tvet=as.numeric(P313==8&!is.na(P313)), # muy poca info
                           estudia.actual=as.vector(2-P306),
                           internet.ultmes=(2-P314A)%+rmna%0
                           )], by="id", all.x = TRUE) %>%
@@ -36,7 +36,8 @@ out.enaho <- function() {
                                      (2-P5048)%+rmna%(2-P5049)%+rmna%(2-P50410)%+rmna%(2-P50411)),
                           trab500.tiempo=
                             mapply(max,ifelse(is.na(P513T),0,P513T)+ifelse(is.na(P518),0,P518),ifelse(is.na(P520),0,P520),na.rm=T),
-                          trab500.buscando=2-P545
+                          trab500.buscando=2-P545,
+                          autoreporte.estudiando=as.numeric(P546==4&!is.na(P546))
                           )], by="id", all.x = TRUE) %>%
     svydesign(ids=~psu, strata=~stratum, weights=~weight, data=.) -> denaho
   
