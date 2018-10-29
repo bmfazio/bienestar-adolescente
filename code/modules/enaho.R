@@ -48,7 +48,7 @@ out.enaho <- function() {
     denaho %>% subset(14<=edad&edad<=16) %>% svyciprop(~I(educ.aprobado >= 4 & educ.aprobado != 12), .),
       #***que grupo para secundaria?
     # Tasa de adolescentes fuera del Sistema educativo (out-of-school rate)
-    denaho %>% subset(10<=edad&edad<=17) %>% svyciprop(~estudia.actual, .),
+    denaho %>% subset(10<=edad&edad<=17) %>% svyciprop(~!estudia.actual, .),
     # Tasa de matrícula bruta en educación superior (incluye los que ya completaron)
     denaho %>% subset(18<=edad&edad<=22) %>% svyciprop(~I((educ.aprobado %in% c(8,10,11))|(educ.esteanho %in% 4:6)), .),
     # Porcentaje de adolescentes involucrados en trabajo infantil

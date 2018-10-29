@@ -1,0 +1,80 @@
+LINKS A FUENTES DE INFORMACION
+---
+[EDUCACION]
+---
+
+Evaluacion Censal de Estudiantes 2016
+(FUENTE MINEDU - RESUMEN)
+https://sistemas15.minedu.gob.pe:8888/evaluacion_censal_publico
+- Falta desagregacion por sexo
+- Desagragable por DRE, UGEL (region, provincia aprox?)
+
+Medida promedio|Previo al inicio|En inicio|En proceso|Satisfactorio
+
+Lectura
+NACIONAL 567|20.5 %|37.7 %|27.5 %|14.3 %
+
+Matemática
+NACIONAL 557|32.3 %|39.3 %|16.9 %|11.5 %
+
+(FUENTE MINEDU - DATA DESAGREGADA)
+Busqueda via: http://datos.minedu.gob.pe/dataset?query=censal&sort_by=changed&sort_order=DESC
+Fuente: http://datos.minedu.gob.pe/dataset/evaluaci%C3%B3n-censal-de-estudiantes-2016
+- Desagregado hasta distrito
+- Igual no desagrega sexo
+---
+
+Prueba PISA 2015
+(FUENTE MINEDU)
+https://sistemas15.minedu.gob.pe:8888/evaluacion_censal_publico
+- Falta desagregacion por sexo
+- No es desagregable a nivel subnacional
+- No muestra modulos de conocimiento TICs o financiero
+
+Nivel
+Media|< 1b| 1b| 1a| 2| 3| 4| 5| 6
+
+Lectura
+NACIONAL 398|6.4|19.2|28.3|27.3|15.0|3.5|0.3||0.0
+
+Matemática
+NACIONAL 387|37.7|28.4|21.0|9.8|2.7|0.4|0.0
+
+(FUENTE OFICIAL PISA)
+http://www.oecd.org/pisa/data/2015database/
+- Pendiente revisar
+---
+[SEGURIDAD]
+---
+GSHS Global School Health Survey 2010
+FUENTE OFICIAL RAW DATA: https://www.cdc.gov/gshs/countries/americas/peru.htm
+- Pendiente revisar
+
+REPORTE PERU: http://www.who.int/ncds/surveillance/gshs/GSHS_Report_Peru_2010.pdf
+- p41: indicadores de salud mental y conexion
+- p56-59: indicadores de "proteccion", afecto de los padres y cosas asi
+---
+
+REVISA Observatorio de violencia
+Hay cosas.
+---
+[OPORTUNIDADES ECONOMICAS]
+---
+TASA DE DESEMPLEO! Revisa definicion, corrige
+
+Eliminar "linea internacional de pobreza" -> pasar a pobreza monetaria en SEGURIDAD
+
+Prueba PISA 2015
+Porcentaje de adolescentes con conocimientos básicos financieros y tenencia de ahorros
+- ver si hay algo de esto
+
+---
+[PARTICIPACION]
+---
+ICCS International Civic and Citizenship Education Study
+(FUENTE MINEDU)
+https://sistemas15.minedu.gob.pe:8888/evaluacion_censal_publico
+- Datos no cargan
+
+Revisar: Encuesta de Juventud
+---
