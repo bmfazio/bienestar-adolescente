@@ -51,25 +51,21 @@ out.enaho <- function() {
   
   list(
     # Porcentaje de adolescentes que usaron el internet en el último mes
-    denaho %>% subset(10<=edad&edad<=19) %>% svyciprop(~internet.ultmes, .),
+    denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~internet.ultmes, .),
     # Tasa de finalización de educación primaria y tasa de finalización de secundaria
-      # definicion original en el documento de Pablo
-    denaho %>% subset(14<=edad&edad<=16) %>% svyciprop(~I(educ.aprobado >= 4 & educ.aprobado != 12), .),
       # definicion a edad "por ley"
-    denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~I(educ.aprobado >= 4 & educ.aprobado != 12), .),
+    denaho %>% subset(12<=edad&edad<=13) %>% svyciprop(~I(educ.aprobado >= 4 & educ.aprobado != 12), .),
     denaho %>% subset(17<=edad&edad<=18) %>% svyciprop(~I(educ.aprobado >= 6 & educ.aprobado != 12), .),
       #***que grupo para secundaria?
     # Tasa de adolescentes fuera del Sistema educativo (out-of-school rate)
-    denaho %>% subset(10<=edad&edad<=17) %>% svyciprop(~!estudia.actual, .),
+    denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~!estudia.actual, .),
     # Tasa de matrícula bruta en educación superior (incluye los que ya completaron)
     denaho %>% subset(18<=edad&edad<=22) %>% svyciprop(~I((educ.aprobado %in% c(8,10,11))|(educ.esteanho %in% 4:6)), .),
     # Porcentaje de adolescentes involucrados en trabajo infantil
-    denaho %>% subset(10<=edad&edad<=11) %>% svyciprop(~I((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=1), .),
     denaho %>% subset(12<=edad&edad<=13) %>% svyciprop(~I((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=24), .),
     denaho %>% subset(14<=edad&edad<=17) %>% svyciprop(~I((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=36), .),
-    denaho %>% subset(10<=edad&edad<=17) %>%
+    denaho %>% subset(12<=edad&edad<=17) %>%
       svyciprop(~I(
-        (10<=edad&edad<=11&((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=1))|
         (12<=edad&edad<=13&((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=24))|
         (14<=edad&edad<=17&((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=36))), .),
     # Tasa de desempleo adolescente (denominador: buscando empleo + ya empleados)
@@ -77,38 +73,26 @@ out.enaho <- function() {
     # Porcentaje de adolescentes sin educación, empleo o formación (NEET)
     denaho %>% subset(15<=edad&edad<=19) %>% svyciprop(~I(!estudia.actual&!trab500&!trab500.buscando), .),
     # Pobrezas
-    denaho %>% subset(10<=edad&edad<=14) %>% svyciprop(~I(pobreza < 3), .),
-    denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~I(pobreza < 3), .),
-    denaho %>% subset(15<=edad&edad<=19) %>% svyciprop(~I(pobreza < 3), .),
-    denaho %>% subset(10<=edad&edad<=14) %>% svyciprop(~I(pobreza < 2), .),
-    denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~I(pobreza < 2), .),
-    denaho %>% subset(15<=edad&edad<=19) %>% svyciprop(~I(pobreza < 2), .)
+    denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~I(pobreza < 3), .)
     ) %>% lapply(svy2pci) %>% do.call(rbind, .) -> tmp.estimates
   
   colnames(tmp.estimates) <- c("valor", "CI95.Inf", "CI95.Sup")
   
   indnom <- c(
-    "% 10-19 que usaron el internet en el último mes",
-    "% 14-16 finalizo educación primaria (rango Pablo)",
-    "% 12-17 finalizo educación primaria",
+    "% 12-17 que usaron el internet en el último mes",
+    "% 12-13 finalizo educación primaria",
     "% 17-18 finalizo educación secundaria",
-    "% 10-17 fuera del Sistema educativo (out-of-school rate)",
+    "% 12-17 fuera del Sistema educativo (out-of-school rate)",
     "% 18-22 matriculados en educación superior (graduados en numerador)",
-    "% 10-11 en trabajo infantil",
     "% 12-13 en trabajo infantil",
     "% 14-17 en trabajo infantil",
-    "% 10-17 en trabajo infantil",
+    "% 12-17 en trabajo infantil",
     "% 15-19 desempleados",
     "% 15-19 nini",
-    "% 10-14 en pobreza",
-    "% 12-17 en pobreza",
-    "% 15-19 en pobreza",
-    "% 10-14 en pobreza extrema",
-    "% 12-17 en pobreza extrema",
-    "% 15-19 en pobreza extrema"
+    "% 12-17 en pobreza"
   )
   
-  "Arregla desempleados" -> comments
+  "OK" -> comments
   
   cbind(indnom,
         data.frame(round(tmp.estimates*c(rep(100,nrow(tmp.estimates))),2)),
