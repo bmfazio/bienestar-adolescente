@@ -1,13 +1,17 @@
+otras cosas:
+https://www.inei.gob.pe/estadisticas/encuestas/
+https://observatorioviolencia.pe/
+
+
 LINKS A FUENTES DE INFORMACION
 ---
 [EDUCACION]
 ---
-
 Evaluacion Censal de Estudiantes 2016
 (FUENTE MINEDU - RESUMEN)
 https://sistemas15.minedu.gob.pe:8888/evaluacion_censal_publico
 - Falta desagregacion por sexo
-- Desagragable por DRE, UGEL (region, provincia aprox?)
+- Desagregable por DRE, UGEL (region, provincia aprox?)
 
 Medida promedio|Previo al inicio|En inicio|En proceso|Satisfactorio
 
@@ -60,10 +64,6 @@ Hay cosas.
 ---
 [OPORTUNIDADES ECONOMICAS]
 ---
-TASA DE DESEMPLEO! Revisa definicion, corrige
-
-Eliminar "linea internacional de pobreza" -> pasar a pobreza monetaria en SEGURIDAD
-
 Prueba PISA 2015
 Porcentaje de adolescentes con conocimientos básicos financieros y tenencia de ahorros
 - ver si hay algo de esto

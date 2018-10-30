@@ -1,20 +1,25 @@
 out.enaho <- function() {
-  ## Estructura del ID: AÑO+CONGLOME+VIVIENDA+HOGAR+CODPERSO
+  ## ID de hogar       hh = AÑO+CONGLOME+VIVIENDA+HOGAR
+  ## ID para persona   id = AÑO+CONGLOME+VIVIENDA+HOGAR+CODPERSO
   # Modulo 200-Info basica de personas del hogar
   enaho01.200 <- import("enaho/2017/603-Modulo02/Enaho01-2017-200.sav" %>% paste0(ineidir,.), setclass = "data.table")
-  enaho01.200[,id:=paste0(AÑO, CONGLOME, VIVIENDA, HOGAR, CODPERSO)] # crear codperso
+  enaho01.200[,hh:=paste0(AÑO, CONGLOME, VIVIENDA, HOGAR)]
+  enaho01.200[,id:=paste0(AÑO, CONGLOME, VIVIENDA, HOGAR, CODPERSO)]
   # Modulo 300-Educacion
   enaho01a.300<- import("enaho/2017/603-Modulo03/Enaho01A-2017-300.sav" %>% paste0(ineidir,.), setclass = "data.table")
-  enaho01a.300[,id:=paste0(AÑO, CONGLOME, VIVIENDA, HOGAR, CODPERSO)] # crear codperso
+  enaho01a.300[,hh:=paste0(AÑO, CONGLOME, VIVIENDA, HOGAR)]
+  enaho01a.300[,id:=paste0(AÑO, CONGLOME, VIVIENDA, HOGAR, CODPERSO)]
   # Modulo 500-Trabajo
   enaho01a.500<- import("enaho/2017/603-Modulo05/Enaho01A-2017-500.sav" %>% paste0(ineidir,.), setclass = "data.table")
-  enaho01a.500[,id:=paste0(AÑO, CONGLOME, VIVIENDA, HOGAR, CODPERSO)] # crear codperso
+  enaho01a.500[,hh:=paste0(AÑO, CONGLOME, VIVIENDA, HOGAR)]
+  enaho01a.500[,id:=paste0(AÑO, CONGLOME, VIVIENDA, HOGAR, CODPERSO)]
+  # Medidas de resumen a nivel de hogar (incluye indicador de pobreza monetaria)
+  enaho.sumaria <- import("/home/bmfazio/Documents/datasets/inei/enaho/2017/603-Modulo34/Sumaria-2017.sav", setclass = "data.table")
+  enaho.sumaria[,hh:=paste0(AÑO, CONGLOME, VIVIENDA, HOGAR)]
   
-  # Info de hogar para linea de pobreza
-  #enhano <- import("/home/bmfazio/Documents/datasets/inei/enaho/2017/603-Modulo34/Sumaria-2017.sav", setclass = "data.table")
   #ENAHO
-  
-  enaho01.200[,.(id, psu=CONGLOME, stratum=ESTRATO, weight=FACPOB07,
+  enaho01.200[,.(id, hh,
+                 psu=CONGLOME, stratum=ESTRATO, weight=FACPOB07,
                  edad=P208A,
                  sexo=putlabel(P207),
                  trab200=as.numeric(((2-P210)%+rmna%!(P211A%in%8:9))==2),
@@ -39,13 +44,20 @@ out.enaho <- function() {
                           trab500.buscando=2-P545,
                           autoreporte.estudiando=as.numeric(P546==4&!is.na(P546))
                           )], by="id", all.x = TRUE) %>%
+    merge(enaho.sumaria[,.(hh,
+                           pobreza=POBREZA)
+                        ], by="hh", all.x = TRUE) %>%
     svydesign(ids=~psu, strata=~stratum, weights=~weight, data=.) -> denaho
   
   list(
     # Porcentaje de adolescentes que usaron el internet en el último mes
     denaho %>% subset(10<=edad&edad<=19) %>% svyciprop(~internet.ultmes, .),
     # Tasa de finalización de educación primaria y tasa de finalización de secundaria
+      # definicion original en el documento de Pablo
     denaho %>% subset(14<=edad&edad<=16) %>% svyciprop(~I(educ.aprobado >= 4 & educ.aprobado != 12), .),
+      # definicion a edad "por ley"
+    denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~I(educ.aprobado >= 4 & educ.aprobado != 12), .),
+    denaho %>% subset(17<=edad&edad<=18) %>% svyciprop(~I(educ.aprobado >= 6 & educ.aprobado != 12), .),
       #***que grupo para secundaria?
     # Tasa de adolescentes fuera del Sistema educativo (out-of-school rate)
     denaho %>% subset(10<=edad&edad<=17) %>% svyciprop(~!estudia.actual, .),
@@ -60,17 +72,26 @@ out.enaho <- function() {
         (10<=edad&edad<=11&((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=1))|
         (12<=edad&edad<=13&((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=24))|
         (14<=edad&edad<=17&((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=36))), .),
-    # Tasa de desempleo adolescente (denominador: buscando empleo)
-    denaho %>% subset(15<=edad&edad<=19&trab500.buscando) %>% svyciprop(~I(!trab500), .),
+    # Tasa de desempleo adolescente (denominador: buscando empleo + ya empleados)
+    denaho %>% subset(15<=edad&edad<=19&((trab500.buscando&!trab500)|trab500)) %>% svyciprop(~I(!trab500), .),
     # Porcentaje de adolescentes sin educación, empleo o formación (NEET)
-    denaho %>% subset(15<=edad&edad<=19) %>% svyciprop(~I(!estudia.actual&!trab500&!trab500.buscando), .)
+    denaho %>% subset(15<=edad&edad<=19) %>% svyciprop(~I(!estudia.actual&!trab500&!trab500.buscando), .),
+    # Pobrezas
+    denaho %>% subset(10<=edad&edad<=14) %>% svyciprop(~I(pobreza < 3), .),
+    denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~I(pobreza < 3), .),
+    denaho %>% subset(15<=edad&edad<=19) %>% svyciprop(~I(pobreza < 3), .),
+    denaho %>% subset(10<=edad&edad<=14) %>% svyciprop(~I(pobreza < 2), .),
+    denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~I(pobreza < 2), .),
+    denaho %>% subset(15<=edad&edad<=19) %>% svyciprop(~I(pobreza < 2), .)
     ) %>% lapply(svy2pci) %>% do.call(rbind, .) -> tmp.estimates
   
   colnames(tmp.estimates) <- c("valor", "CI95.Inf", "CI95.Sup")
   
   indnom <- c(
     "% 10-19 que usaron el internet en el último mes",
-    "% 14-16 finalizo educación primaria (pendiente finalización secundaria)",
+    "% 14-16 finalizo educación primaria (rango Pablo)",
+    "% 12-17 finalizo educación primaria",
+    "% 17-18 finalizo educación secundaria",
     "% 10-17 fuera del Sistema educativo (out-of-school rate)",
     "% 18-22 matriculados en educación superior (graduados en numerador)",
     "% 10-11 en trabajo infantil",
@@ -78,10 +99,16 @@ out.enaho <- function() {
     "% 14-17 en trabajo infantil",
     "% 10-17 en trabajo infantil",
     "% 15-19 desempleados",
-    "% 15-19 nini"
+    "% 15-19 nini",
+    "% 10-14 en pobreza",
+    "% 12-17 en pobreza",
+    "% 15-19 en pobreza",
+    "% 10-14 en pobreza extrema",
+    "% 12-17 en pobreza extrema",
+    "% 15-19 en pobreza extrema"
   )
   
-  "Faltan indicadores de pobreza" -> comments
+  "Arregla desempleados" -> comments
   
   cbind(indnom,
         data.frame(round(tmp.estimates*c(rep(100,nrow(tmp.estimates))),2)),
@@ -89,37 +116,3 @@ out.enaho <- function() {
 }
 
 out.enaho <- out.enaho()
-
-# ### < achori >
-# # Proporción de adolescentes entre 15-19 por debajo de la línea internacional de la pobreza
-#   # El indicador mide el número de adolescentes que pertenecen a hogares con un nivel de gasto inferior a la línea internacional de pobreza.
-#   # Hay dos fuentes de gasto: Sumaria por 8 y por 12 grupos de gasto
-#   # Hay dos items sobre gasto: Gasto total monetario, Gasto total bruto.
-#   # (por que gasto y no ingreso?)
-#   # Variables:
-#     # Linea de pobreza total, Linea de pobreza alimentaria
-#     # POBREZA: Pobre extremo, no extremo, no pobre <- usar esto?
-# 
-# # Pobreza multidimensional
-# # definicion: Proporción de adolescentes en pobreza multi-dimensional http://hdr.undp.org/en/2018-MPI
-# enhano <- import("/home/bmfazio/Documents/datasets/inei/enaho/2017/603-Modulo01/Enaho01-2017-100.sav", setclass = "data.table")
-# 
-# ### Health: no hay info de salud del adolescente
-# ### Education: solo tomamos info del adolescente mismo?
-# ### STANDARD OF LIVING:
-# #Cooking Fuel 	The household cooks with dung, wood, charcoal or coal.
-# cat("revisar cooking")
-# enhano$P1135==1|enhano$P1136==1|enhano$P1137==1 # "otro" considerar como "malo"?
-# #enhano$P1138 # "no cocinan" considerar como "malo"?
-# #Sanitation 	The household’s sanitation facility is not improved (according to SDG guidelines) or it is improved but shared with other households.
-# cat("pendiente improved facility")
-#   # cual es al definicion de SDG improved facility?
-# #Drinking Water 	The household does not have access to improved drinking water (according to SDG guidelines) or safe drinking water is at least a 30-minute walk from home, round trip.
-#   # No hay disponibilidad de informacion sobre distancia de la fuente o fuentes secundarias si fuente primaria no es fiable
-# cat("revisa drinking water")
-# (enhano$P110 %in% 1:3)&(enhano$P110A %in% 2)|(enhano$P110 %in% 4:6)
-# #Electricity 	The household has no electricity.
-# enhano$P1121==1
-# #Housing 	Housing materials for at least one of roof, walls and floor are inadequate: the floor is of natural materials and/or the roof and/or walls are of natural or rudimentary materials.
-# (enhano$P101 %in% c(5:7))|(enhano$P102 %in% 3:8)|(enhano$P103 %in% c(4,6))|(enhano$P103 %in% c(2,5:7))
-# #Assets 	The household does not own more than one of these assets: radio, TV, telephone, computer, animal cart, bicycle, motorbike or refrigerator, and does not own a car or truck.

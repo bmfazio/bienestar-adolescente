@@ -1,5 +1,3 @@
-library(rio);library(data.table);library(dplyr);library(survey)
-
 source("modules/config.R")
 
 source("modules/endes.R")
