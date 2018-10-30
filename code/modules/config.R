@@ -5,7 +5,10 @@ library(data.table)
 
 # Load the appropriate folder paths depending
 # on where code is being run from
-data.table(places = "Linux|bmfazio-pc|x86_64|bmfazio", path = "/home/bmfazio/Documents/datasets")[
+data.table(places = c("Linux|bmfazio-pc|x86_64|bmfazio",
+                      "Windows|DESKTOP-5CGB5S0|x86-64|Personal"),
+           path = c("/home/bmfazio/Documents/datasets",
+                    "D:/datasets"))[
   places == paste(Sys.info()[c(1,4:6)], collapse = "|"), path] -> datadir
 
   # ENDES subdir
