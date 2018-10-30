@@ -68,6 +68,25 @@ Prueba PISA 2015
 Porcentaje de adolescentes con conocimientos básicos financieros y tenencia de ahorros
 - ver si hay algo de esto
 
+pisa_bq_overall_flt_compendium
+>>>> FQ001Q01TA	Have you ever learned how to manage your money in a course? At school, in a subject\course about managing your money
+>>>> FQ001Q02TA	Have you ever learned how to manage your money in a course? At school as part of another subject or course
+>>>> FQ001Q03TA	Have you ever learned how to manage your money in a course? In an activity outside school
+FQ002Q01TA	How often do you discuss money matters with? Parents\guardians or other adult relations
+FQ002Q02TA	How often do you discuss money matters? Friends
+FQ003Q01TA	If you don't have enough money to buy something you really want?
+FQ004Q01TA	Do you get money from any of these sources? An allowance or pocket money for regularly doing chores at home
+FQ004Q02TA	Do you get money from any of these sources? An allowance or pocket money, without having to do any chores
+FQ004Q03TA	Do you get money from any of these sources? Working outside school hours (e.g. a holiday job, part-time work)
+FQ004Q04TA	Do you get money from any of these sources? Working in a family business
+FQ004Q05TA	Do you get money from any of these sources? Occasional informal jobs (e.g. baby-sitting or gardening)
+FQ004Q06TA	Do you get money from any of these sources? Gifts of money from friends or relatives
+FQ004Q07TA	Do you get money from any of these sources? Selling things (e.g. at local markets or on eBay)
+FQ005Q01TA	Which of these statements about saving money best applies to you?
+>>>> FQ006Q01TA	Do you have either of the following? Bank account
+>>>> FQ006Q02TA	Do you have either of the following? Pre-paid debit card
+
+
 ---
 [PARTICIPACION]
 ---
