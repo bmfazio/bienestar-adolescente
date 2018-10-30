@@ -57,8 +57,8 @@ out.endes <- function() {
   
   list(
     dmujer %>% subset(as.numeric(gedad) == 1) %>% svymean( ~ nhijos, .),
-    dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ antic.moderno, .),
-    dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ antic.modotra, .),
+    dmujer %>% subset(as.numeric(gedad) == 1 & inisex > 0) %>% svyciprop( ~ antic.moderno, .),
+    dmujer %>% subset(as.numeric(gedad) == 1 & inisex > 0) %>% svyciprop( ~ antic.modotra, .),
     dmujer %>% subset(as.numeric(gedad) == 1 & inisex > 0) %>% svyciprop( ~ ultsex.condon, .),
     dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ v.emoc, .),
     dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ v.fisi, .),
