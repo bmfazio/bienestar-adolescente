@@ -30,7 +30,7 @@ out.endes <- function() {
       merge(rec84dv, by = "CASEID", all.x = T))[,.(estrato.region=putlabel(V023), estrato.urbrur=V022, psuid=V021,
                                                    peso=V005/10**6,
                                                    gedad=putlabel(V013), inisex=V525,
-                                                   nhijos=V201,
+                                                   nhijos=V209,
                                                    antic.moderno=as.numeric(V364==1),
                                                    antic.modotra=as.numeric(V364<=2),
                                                    ultsex.condon=case_when(V761 == 8 ~ NA_real_, TRUE ~ V761),
