@@ -3,12 +3,21 @@ enares200 <- import("enares/503-Modulo770/14_CRS04_CAP200.sav" %>% paste0(ineidi
 
 enares200[,.(peso = Factor_Alumnos, estrato = putlabel(AREA), psu = as.numeric(factor(COD_MOD)),
              sexo = putlabel(SEXO), edad = EDAD,
-             v.emo = as.numeric(
+             casa.v.emo = as.numeric(
+               mapply(function(...)2*length(list(...))-sum(...),
+                      C4P201_1,C4P201_2,C4P201_3,C4P201_4,C4P201_5,
+                      C4P201_6,C4P201_7,C4P201_8,C4P201_9,C4P201_10,
+                      C4P201_11)>0),
+             casa.v.fis = as.numeric(
+               mapply(function(...)2*length(list(...))-sum(...),
+                      C4P205_1,C4P205_2,C4P205_3,C4P205_4,C4P205_5,
+                      C4P205_6,C4P205_7)>0),
+             cole.v.emo = as.numeric(
                mapply(function(...)2*length(list(...))-sum(...),
                       C4P225_1,C4P225_2,C4P225_3,C4P225_4,C4P225_5,
                       C4P225_6,C4P225_7,C4P225_8,C4P225_9,C4P225_10,
                       C4P225_11,C4P225_12,C4P225_13,C4P225_14)>0),
-             v.fis = as.numeric(
+             cole.v.fis = as.numeric(
                mapply(function(...)2*length(list(...))-sum(...),
                       C4P229_1,C4P229_2,C4P229_3,C4P229_4,C4P229_5,
                       C4P229_6,C4P229_7,C4P229_8,C4P229_9,C4P229_10)>0),
@@ -27,19 +36,20 @@ enares200[,.(peso = Factor_Alumnos, estrato = putlabel(AREA), psu = as.numeric(f
 # #   Violencia de cualquier tipo en colegio (emocional/fisica = bullying) (12-17) ... incluir sexual?
 # denares %>% svyciprop(~I((v.emo+v.fis)>0), .)
 
-list(denares %>% svyciprop(~I((v.emo+v.fis+v.sex)>0), .),
+list(denares %>% svyciprop(~I((casa.v.emo+casa.v.fis+cole.v.emo+cole.v.fis)>0), .),
      denares %>% svyciprop(~v.sex, .),
-     denares %>% svyciprop(~I((v.emo+v.fis)>0), .)) %>%  lapply(svy2pci) %>% do.call(rbind, .) -> tmp.estimates
+     denares %>% svyciprop(~I((cole.v.emo+cole.v.fis)>0), .)
+     ) %>%  lapply(svy2pci) %>% do.call(rbind, .) -> tmp.estimates
 
 colnames(tmp.estimates) <- c("valor", "CI95.Inf", "CI95.Sup")
   
 indnom <- c(
-  "% de adolescentes que han experimentado violencia (cualquiera: emocional, fisica, sexual)",
-  "% de adolescentes que han experimentado violencia sexual ejercida por otra persona que no es su pareja (no se puede excluir pareja - ver comentarios)",
-  "% de adolescentes que reportaron ser victimas de bullying (preguntas de violencia emocional o fisica)"
+  "% de adolescentes que han experimentado violencia (hogar o escuela)",
+  "% de adolescentes que han experimentado violencia sexual ejercida por otra persona que no es su pareja",
+  "% de adolescentes que reportaron ser victimas de bullying"
 )
   
-"Los tres indicadores miden casi lo mismo. En v.sexual no se puede excluir pareja por falta de informacion en 'otros' y algunos casos podrian no ser violencia bajo esa situacion" -> comments
+"OK" -> comments
   
 cbind(indnom,
       data.frame(round(tmp.estimates*c(rep(100,nrow(tmp.estimates))),2)),

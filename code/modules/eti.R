@@ -60,11 +60,11 @@ out.eti <- function() {
     # Tiempo dedicado a tareas del hogar (no remunerado) [horas/semana]
     deti %>% subset(10<=edad&edad<=17&!(is.na(tdomesticoLV)|is.na(tdomesticoSD))) %>%
       svymean( ~I(tdomesticoLV.tiempo+tdomesticoSD.tiempo), .),
-    # Porcentaje de adolescentes involucrados en trabajo infantil (ta difizil la definicion estricta)
-    deti %>% subset(12<=edad&edad<=13&!(is.na(tdomesticoLV)|is.na(tdomesticoSD)|is.na(trabtiempo))) %>%
-      svyciprop( ~I((trabtiempo+tdomesticoLV.tiempo+tdomesticoSD.tiempo)>=24), .),
-    deti %>% subset(14<=edad&edad<=17&!(is.na(tdomesticoLV)|is.na(tdomesticoSD)|is.na(trabtiempo))) %>%
-      svyciprop( ~I((trabtiempo+tdomesticoLV.tiempo+tdomesticoSD.tiempo)>=36), .),
+    # Porcentaje de adolescentes involucrados en trabajo infantil (todos los tiempos)
+    deti %>% subset(12<=edad&edad<=17) %>%
+      svyciprop(~I(
+        (12<=edad&edad<=13&(trabtiempo)>=24)|
+        (14<=edad&edad<=17&(trabtiempo)>=36)), .),
     deti %>% subset(12<=edad&edad<=17) %>%
       svyciprop(~I(
         (12<=edad&edad<=13&(trabtiempo+tdomesticoLV.tiempo+tdomesticoSD.tiempo)>=24)|
@@ -75,9 +75,8 @@ out.eti <- function() {
   
   indnom <- c(
   "Tiempo dedicado a tareas del hogar [horas/semana]",
-  "% de adolescentes 12 a 13 años involucrados en trabajo infantil",
-  "% de adolescentes 14 a 17 años involucrados en trabajo infantil",
-  "% de adolescentes 12 a 17 años involucrados en trabajo infantil"
+  "% de adolescentes 12 a 17 años involucrados en trabajo infantil (excluye hogar)",
+  "% de adolescentes 12 a 17 años involucrados en trabajo infantil (todos los tiempos)"
   )
   
   "Incluir trabajo en casa?" -> comments
