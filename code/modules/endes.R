@@ -57,6 +57,8 @@ out.endes <- function() {
   
   list(
     dmujer %>% subset(as.numeric(gedad) == 1) %>% svymean( ~ nhijos, .),
+    dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ I(imc<1850|2500<imc), .),
+    dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ anemia, .),
     dmujer %>% subset(as.numeric(gedad) == 1 & inisex > 0) %>% svyciprop( ~ antic.moderno, .),
     dmujer %>% subset(as.numeric(gedad) == 1 & inisex > 0) %>% svyciprop( ~ antic.modotra, .),
     dmujer %>% subset(as.numeric(gedad) == 1 & inisex > 0) %>% svyciprop( ~ ultsex.condon, .),
@@ -67,16 +69,10 @@ out.endes <- function() {
     dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ I(v.emoc==1|v.sex==1|v.fisi==1|v.fisigrav==1), .),
     dmujer %>% subset(as.numeric(gedad) == 2) %>% svyciprop( ~ I(edad.matri < 15), .),
     dmujer %>% subset(as.numeric(gedad) == 2) %>% svyciprop( ~ I(edad.matri < 18), .),
-    dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ anemia, .),
-    dmujer %>% subset(as.numeric(gedad) == 1) %>% svyciprop( ~ I(imc<1850|2500<imc), .),
     dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~v.golpe, .),
     dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~v.arma, .),
     dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~I(v.arma==1|v.golpe==1), .),
-    dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.vida, .),
-    dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.anho, .),
-    dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.12va, .),
     dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~alc.30d , .),
-    dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~tabaco.anho, .),
     dsalud %>% subset(15<=edad&edad<=19) %>% svyciprop(~tabaco.30d , .)
   ) %>% lapply(svy2pci) %>% do.call(rbind, .) -> tmp.estimates
   
@@ -84,6 +80,8 @@ out.endes <- function() {
   
   indnom <- c(
     "Nacidos vivos / 1000 mujeres 15-19",
+    "% mujeres 15-19 con bajo peso/sobre peso",
+    "% mujeres 15-19 con anemia",
     "% mujeres 15-19 usa anticonceptivo moderno",
     "% mujeres 15-19 usa anticonceptivo moderno o tradicional",
     "% mujeres 15-19 uso condon en ultimo encuentro sexual",
@@ -94,16 +92,10 @@ out.endes <- function() {
     "% mujeres 15-19 experimento cualquier violencia",
     "% mujeres 20-24 unidas antes de los 15",
     "% mujeres 20-24 unidas antes de los 18",
-    "% mujeres 15-19 con anemia",
-    "% mujeres 15-19 con bajo peso/sobre peso",
     "% personas 15-19 cuya pareja golpeo en ultimos 12 meses",
     "% personas 15-19 cuya pareja agredio con objeto en ultimos 12 meses",
     "% personas 15-19 cuya pareja agredio c/s objeto en ultimos 12 meses",
-    "% personas 15-19 han consumido alcohol en su vida",
-    "% personas 15-19 han consumido alcohol en ultimos 12 meses",
-    "% personas 15-19 han consumido alcohol >=12 veces en ultimos 12 meses",
     "% personas 15-19 han consumido alcohol en ultimos 30 dias",
-    "% personas 15-19 han consumido tabaco en ultimos 12 meses",
     "% personas 15-19 han consumido tabaco en ultimos 30 dias"
   )
   

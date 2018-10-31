@@ -50,12 +50,12 @@ out.enaho <- function() {
     svydesign(ids=~psu, strata=~stratum, weights=~weight, data=.) -> denaho
   
   list(
-    # Porcentaje de adolescentes que usaron el internet en el último mes
-    denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~internet.ultmes, .),
     # Tasa de finalización de educación primaria y tasa de finalización de secundaria
       # definicion a edad "por ley"
     denaho %>% subset(12<=edad&edad<=13) %>% svyciprop(~I(educ.aprobado >= 4 & educ.aprobado != 12), .),
     denaho %>% subset(17<=edad&edad<=18) %>% svyciprop(~I(educ.aprobado >= 6 & educ.aprobado != 12), .),
+    # Porcentaje de adolescentes que usaron el internet en el último mes
+    denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~internet.ultmes, .),
       #***que grupo para secundaria?
     # Tasa de adolescentes fuera del Sistema educativo (out-of-school rate)
     denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~!estudia.actual, .),
@@ -79,9 +79,9 @@ out.enaho <- function() {
   colnames(tmp.estimates) <- c("valor", "CI95.Inf", "CI95.Sup")
   
   indnom <- c(
-    "% 12-17 que usaron el internet en el último mes",
     "% 12-13 finalizo educación primaria",
     "% 17-18 finalizo educación secundaria",
+    "% 12-17 que usaron el internet en el último mes",
     "% 12-17 fuera del Sistema educativo (out-of-school rate)",
     "% 18-22 matriculados en educación superior (graduados en numerador)",
     "% 12-13 en trabajo infantil",
