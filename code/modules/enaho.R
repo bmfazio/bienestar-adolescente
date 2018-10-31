@@ -73,7 +73,8 @@ out.enaho <- function() {
     # Porcentaje de adolescentes sin educación, empleo o formación (NEET)
     denaho %>% subset(15<=edad&edad<=19) %>% svyciprop(~I(!estudia.actual&!trab500&!trab500.buscando), .),
     # Pobrezas
-    denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~I(pobreza < 3), .)
+    denaho %>% subset(12<=edad&edad<=17) %>% svyciprop(~I(pobreza < 3), .),
+    denaho %>% subset(15<=edad&edad<=19) %>% svyciprop(~I(pobreza < 3), .)
     ) %>% lapply(svy2pci) %>% do.call(rbind, .) -> tmp.estimates
   
   colnames(tmp.estimates) <- c("valor", "CI95.Inf", "CI95.Sup")
@@ -89,7 +90,8 @@ out.enaho <- function() {
     "% 12-17 en trabajo infantil",
     "% 15-19 desempleados",
     "% 15-19 nini",
-    "% 12-17 en pobreza"
+    "% 12-17 en pobreza",
+    "% 15-19 en pobreza"
   )
   
   "OK" -> comments

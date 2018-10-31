@@ -120,7 +120,29 @@ out.enut <- function() {
                        ifelse(P501P_8==1,P502P_8_H+P502P_8_M/60,0)%+rmna%
                        ifelse(P501P_9==1,P502P_9_H+P502P_9_M/60,0)%+rmna%
                        ifelse(P501P_10==1,P502P_10_H+P502P_10_M/60,0),
+                     tiempo.libre =
+                       # Tiempo en familia/social
+                       ifelse(P501K_1==1,P502K_1_H+P502K_1_M/60,0)%+rmna%
+                       ifelse(P501K_2==1,P502K_2_H+P502K_2_M/60,0)%+rmna%
+                       ifelse(P501K_3==1,P502K_3_H+P502K_3_M/60,0)%+rmna%
+                       ifelse(P501K_4==1,P502K_4_H+P502K_4_M/60,0)%+rmna%
+                       ifelse(P501K_5==1,P502K_5_H+P502K_5_M/60,0)%+rmna%
+                       ifelse(P501K_6==1,P502K_6_H+P502K_6_M/60,0)%+rmna%
+                       # Tiempo en actividad recreacional
+                       ifelse(P501L_1==1,P502L_1_H+P502L_1_M/60,0)%+rmna%
+                       ifelse(P501L_2==1,P502L_2_H+P502L_2_M/60,0)%+rmna%
+                       ifelse(P501L_3==1,P502L_3_H+P502L_3_M/60,0)%+rmna%
+                       ifelse(P501L_4==1,P502L_4_H+P502L_4_M/60,0)%+rmna%
+                       ifelse(P501L_5==1,P502L_5_H+P502L_5_M/60,0)%+rmna%
+                       ifelse(P501L_6==1,P502L_6_H+P502L_6_M/60,0)%+rmna%
+                       ifelse(P501L_7==1,P502L_7_H+P502L_7_M/60,0)%+rmna%
+                       ifelse(P501L_8==1,P502L_8_H+P502L_8_M/60,0)%+rmna%
+                       ifelse(P501L_9==1,P502L_9_H+P502L_9_M/60,0)%+rmna%
+                       ifelse(P501L_10==1,P502L_10_H+P502L_10_M/60,0)%+rmna%
+                       ifelse(P501L_11==1,P502L_11_H+P502L_11_M/60,0)%+rmna%
+                       ifelse(P501L_12==1,P502L_12_H+P502L_12_M/60,0),
                      sindicato = 2-P501O_5,
+                     voluntario = ((2-P501O_1)%+rmna%(2-P501O_2)%+rmna%(2-P501O_3)%+rmna%(2-P501O_4)%+rmna%(2-P501O_5))>0,
                      cetpro = ((2-P501B_4)%+rmna%(2-P501B_5)>0)
                      )],
           by = "id") %>%
@@ -129,29 +151,32 @@ out.enut <- function() {
   list(
     # Tiempo dedicado a tareas del hogar (no remunerado) [horas/semana]
     denut %>% subset(12<=edad&edad<=17) %>% svymean( ~ tiempo.hogar, .),
+    # Porcentaje de adolescentes que participan en actividades recreacionales o sociales por un periodo específico durante el día o la semana
+    denut %>% subset(12<=edad&edad<=17) %>% svymean( ~ tiempo.libre, .),    
     # Participación de adolescentes en sindicatos
     denut %>% subset(12<=edad&edad<=17) %>% svyciprop( ~ sindicato, .),
+    # Indicador de voluntariado
+    denut %>% subset(12<=edad&edad<=17) %>% svyciprop( ~ voluntario, .),
     # CETPRO 500-B4
     denut %>% subset(15<=edad&edad<=19) %>% svyciprop( ~ cetpro, .)
-    # Porcentaje de adolescentes que participan en actividades recreacionales o sociales por un periodo específico durante el día o la semana 500-K,L
-    # Indicador de voluntariado
-    # 500 O, P?
     # Participación en movimientos formales y no formales
-    # 500 O?
+    # No hay algo que no sea redundante con voluntariado
     )  %>% lapply(svy2pci) %>% do.call(rbind, .) -> tmp.estimates
   
     colnames(tmp.estimates) <- c("valor", "CI95.Inf", "CI95.Sup")
   
   indnom <- c(
     "(12-17 años) Tiempo dedicado a tareas del hogar (no remunerado) [horas/semana]",
+    "(12-17 años) Tiempo recreacional/social [horas/semana]",
     "(12-17 años) Participación de adolescentes en sindicatos",
+    "(12-17 años) Participación de adolescentes en trabajo voluntario",
     "(15-19 años) Estudia en CETPRO"
   )
   
   "Documento de Pablo indica a partir de 10 años, pero aqui solo hay desde 12. Falta detallar voluntariado, movimiento formales y actividades recreacionales" -> comments
   
   cbind(indnom,
-        data.frame(round(tmp.estimates*c(1,rep(100,nrow(tmp.estimates)-1)),2)),
+        data.frame(round(tmp.estimates*c(1,1,rep(100,nrow(tmp.estimates)-2)),2)),
         fuente = "ENUT 2010") %>% list(content=., comments=comments)
 }
 
