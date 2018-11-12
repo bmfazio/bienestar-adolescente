@@ -1,0 +1,31 @@
+http://vs-web-fs-1.oecd.org/pisa/PISA2015-ENG_NatQuest.zip
+>>
+Peru-Spanish For Student_Questionnaire_Common_Part_Production.pdf
+
+p19 (Muy/desacuerdo/acuerdo/Muy):
+Mis padres están interesados en mis actividades escolares.
+Mis padres apoyan mis esfuerzos y logros escolares.
+Mis padres me apoyan cuando tengo dificultades en el colegio.
+Mis padres me motivan para tener confianza en mí mismo.
+
+p28
+En general, ¿cuán satisfecho(a) te sientes con tu vida actual en estos días?
+
+p29
+¿Cuál de los siguientes grados o niveles educativos esperas poder terminar de estudiar?
+
+p31
+Constantemente me preocupa que me resulte difícil dar un examen.
+Me preocupa que yo pueda tener notas bajas en el colegio.
+Incluso cuando yo estoy bien preparado(a) para un examen, me siento
+muy ansioso(a).
+Me pongo muy tenso(a) cuando estudio para un examen.
+Me pongo nervioso(a) cuando no sé cómo resolver una tarea del colegio.
+
+p32
+Yo quiero tener notas altas en todos o en casi todos mis cursos.
+Yo quiero poder elegir entre las mejores oportunidades disponibles
+cuando termine el colegio.
+Yo quiero ser el mejor en todo lo que haga.
+Me veo a mí mismo(a) como una persona ambiciosa.
+Yo quiero ser uno(a) de los(as) mejores de mi clase.

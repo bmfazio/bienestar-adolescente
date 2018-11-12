@@ -1,0 +1,28 @@
+http://www.who.int/ncds/surveillance/gshs/2010_Peru_GSHS_Questionnaire.pdf
+
+--- Pobreza
+6) During the past 30 days, how often did you go hungry because there was not enough food in your home
+
+--- Salud mental
+22) During the past 12 months, how often have you felt lonely?
+23) During the past 12 months, how often have you been so worried about something that you could not sleep at night?
+24) During the past 12 months, did you ever seriously consider attempting suicide?
+25) During the past 12 months, did you make a plan about how you would attempt suicide?
+26) During the past 12 months, how many times did you actually attempt suicide?
+27) How many close friends do you have?
+
+--- Conexion(?)
+59) During the past 30 days, on how many days did you miss classes or school without permission?
+60) During the past 30 days, how often were most of the students in your school kind and helpful?
+61) During the past 30 days, how often did your parents or guardians check to see if your homework was done?
+62) During the past 30 days, how often did your parents or guardians understand your problems and worries?
+63) During the past 30 days, how often did your parents or guardians really know what you were doing with your free time?
+64) During the past 30 days, how often did your parents or guardians go through your things without your approval?
+65) During the past 30 days, how often did your parents or guardians show you affection?
+66) During the past 30 days, how often did your parents or guardians spend time with you?
+67) During the past 30 days, how often did your parents or guardians really know where you went at night?
+--- v no tan util
+68) During this school year, was a school advisor or counselor assigned to your grade?
+69) During this school year, did you spend at least one hour per week with your school advisor or counselor?
+70) Is your school advisor or counselor aware of the problems that students have in your grade?
+71) Does your school advisor or counselor really care about you?
