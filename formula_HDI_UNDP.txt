@@ -1,0 +1,13 @@
+HDI = geometric mean of normalized indices for each dimension
+
+Step 1. Creating the dimension indices
+
+>Minimum and maximum values (goalposts) are SET
+>Goalposts used to transform indicators into 0-1 indices
+>Each indicator is calculated as (actual - max / max - min)
+>Dimension index comes from arithmetic mean of above normalized indices
+
+Step 2. Aggregate dimensions
+
+> ( I_1 x ... I_n ) ** 1/n
+
