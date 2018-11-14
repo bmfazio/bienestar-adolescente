@@ -2,9 +2,11 @@ library(rio)
 library(yaml)
 library(dplyr)
 library(drake)
+library(readxl)
 library(survey)
 library(data.table)
 
+options(encoding = "utf8")
 pkgconfig::set_config("drake::strings_in_dots" = "literals")
 
 datadir <- read_yaml("config.yaml")[[paste(Sys.info(),collapse="|")]]
@@ -12,6 +14,7 @@ datadir <- read_yaml("config.yaml")[[paste(Sys.info(),collapse="|")]]
 # ENDES subdir
 if(length(datadir) == 1 & any(dir.exists(datadir))){
   ineidir <- file.path(datadir, "inei")
+  minedudir <- file.path(datadir, "minedu")
 } else {
   stop("data dir not found")
 }
