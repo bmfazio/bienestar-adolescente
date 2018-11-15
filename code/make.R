@@ -1,15 +1,12 @@
-# Load libraries and custom functions
 source(file.path("drake","setup.R"))
-source(file.path("drake","prep_endes.R"))
-source(file.path("drake","prep_enaho.R"))
-source(file.path("drake","prep_ece.R"))
+source(file.path("drake","dataprep.R"))
+source(file.path("drake","indicators.R"))
 
-plan <- bind_plans(
-  ece_load,
-  enaho_load,
-  endes_load,
-  enaho_merged,
-  endes_merged
+fplan <- bind_plans(
+  plan_prep,
+  indicators_all
 )
 
-make(plan)
+make(fplan)
+
+vis_drake_graph(drake_config(fplan))

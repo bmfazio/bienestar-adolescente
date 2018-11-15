@@ -37,8 +37,8 @@ enaho_load <- drake_plan(
     expand = FALSE
   )
 
-enaho_merged <- drake_plan(
-  enaho_full =
+enaho_merge <- drake_plan(
+  enaho_ready =
     enaho01.200[,.(
       id, hh,
       psu = CONGLOME,
@@ -94,5 +94,8 @@ enaho_merged <- drake_plan(
       pobreza = POBREZA
       )],
       by="hh", all.x = TRUE) %>%
-    svydesign(ids=~psu, strata=~stratum, weights=~weight, data=.)
+    svydesign(ids =~ psu,
+              strata =~ stratum,
+              weights =~ weight,
+              data = .)
 )

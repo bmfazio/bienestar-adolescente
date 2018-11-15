@@ -4,6 +4,7 @@ library(dplyr)
 library(drake)
 library(readxl)
 library(survey)
+library(stringi)
 library(data.table)
 
 options(encoding = "utf8")
@@ -37,15 +38,16 @@ putlabel <- function(x) {
 # into a simple 3-vector
 svy2pci <- function(x) {
   xclass <- attr(x, "class")
-  if (xclass == "svyciprop") {
+  if(is.null(xclass)) {
+    warning("not a svyciprop or svystat object, zero-width interval assumed")
+    rep(x, 3)
+  } else if (xclass == "svyciprop") {
     xci <- attr(x, "ci")
     c(as.vector(x), xci[1], xci[2])
   } else if (xclass == "svystat") {
     xsd <- sqrt(attr(x, "var"))
     z <- qnorm(0.975)
     as.vector(x) + c(0, -z*xsd, z*xsd)
-  } else {
-    stop("only works on svyciprop or svystat objects")
   }
 }
 

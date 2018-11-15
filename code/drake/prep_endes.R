@@ -59,7 +59,7 @@ endes_load <- drake_plan(
     expand = FALSE
   )
   
-endes_merged <- drake_plan(
+endes_merge <- drake_plan(
   # Cuestionarios exclusivos para mujer
   endes_mujer = (
     rec0111 %>%

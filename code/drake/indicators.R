@@ -39,60 +39,125 @@ endes_indicators <- drake_plan(
 
 enaho_indicators <- drake_plan(
   finalizacion_primaria =
-    enaho_full %>%
+    enaho_ready %>%
     subset(12<=edad&edad<=13) %>%
     svyciprop(~I(educ.aprobado >= 4 & educ.aprobado != 12), .),
   finalizacion_secundaria =
-    enaho_full %>%
+    enaho_ready %>%
     subset(17<=edad&edad<=18) %>%
     svyciprop(~I(educ.aprobado >= 6 & educ.aprobado != 12), .),
   out_of_school =
-    enaho_full %>%
+    enaho_ready %>%
     subset(12<=edad&edad<=17) %>%
     svyciprop(~!estudia.actual, .),
   matricula_superior =
-  enaho_full %>%
+  enaho_ready %>%
     subset(18<=edad&edad<=22) %>%
     svyciprop(~I((educ.aprobado %in% c(8,10,11))|(educ.esteanho %in% 4:6)), .),
   pobreza_monetaria =
-    enaho_full %>%
+    enaho_ready %>%
     subset(15<=edad&edad<=19) %>%
     svyciprop(~I(pobreza < 3), .),
   trabajo_infantil_enaho =
-    enaho_full %>%
+    enaho_ready %>%
     subset(12<=edad&edad<=17) %>%
     svyciprop(~I(
       (12<=edad&edad<=13 & ((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=24))|
         (14<=edad&edad<=17 & ((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=36))
       ), .),
   desempleo_adolescente =
-    enaho_full %>%
+    enaho_ready %>%
     subset(15<=edad&edad<=19&((trab500.buscando&!trab500)|trab500)) %>%
     svyciprop(~I(!trab500), .),
   porcentaje_nini =
-    enaho_full %>%
+    enaho_ready %>%
     subset(15<=edad&edad<=19) %>%
     svyciprop(~I(!estudia.actual&!trab500&!trab500.buscando), .),
   uso_internet =
-    enaho_full %>%
+    enaho_ready %>%
     subset(12<=edad&edad<=17) %>%
     svyciprop(~internet.ultmes, .)
 )
 
-
-endes_plan <- bind_plans(
-  endes_load,
-  endes_merged,
-  endes_indicators
+ece_indicators <- drake_plan(
+  competenca_lect.mate =
+    mean(ece_ready$Satisfactorio)
 )
 
-config <- drake_config(endes_plan)
-vis_drake_graph(config)
+enares_indicators <- drake_plan(
+  violencia_cualquier =
+    enares_ready %>%
+    svyciprop(~I((casa.v.emo+casa.v.fis+cole.v.emo+cole.v.fis)>0), .),
+  violencia_bullying =
+    enares_ready %>%
+    svyciprop(~I((cole.v.emo+cole.v.fis)>0), .),
+  violencia_sexual =
+     enares_ready %>%
+    svyciprop(~v.sex, .)
+)
 
-# Para despues:
-#svyby(~nhijos, ~estrato.region, design = dsalud.natalidad, svymean, na.rm = T)
-#svyby(~nhijos, ~estrato.region, design = subset(dsalud.natalidad, !is.na(nhijos)), svymean)
+eti_indicators <- drake_plan(
+  horas_trabajo.hogar =
+    eti_ready %>%
+    subset(10<=edad&edad<=17&!(is.na(tdomesticoLV)|is.na(tdomesticoSD))) %>%
+    svymean( ~I(tdomesticoLV.tiempo+tdomesticoSD.tiempo), .),
+  tinfantil_full =
+    eti_ready %>% subset(12<=edad&edad<=17) %>%
+    svyciprop(~I(
+      (12<=edad&edad<=13&(trabtiempo+tdomesticoLV.tiempo+tdomesticoSD.tiempo)>=24)|
+        (14<=edad&edad<=17&(trabtiempo+tdomesticoLV.tiempo+tdomesticoSD.tiempo)>=36)),.),
+  tinfantil_shogar =
+    eti_ready %>%
+    subset(12<=edad&edad<=17) %>%
+    svyciprop(~I(
+      (12<=edad&edad<=13&(trabtiempo)>=24)|
+        (14<=edad&edad<=17&(trabtiempo)>=36)), .)
+)
 
-lapply(svy2pci) %>% do.call(rbind, .) -> tmp.estimates
+enut_indicators <- drake_plan(
+  enrolamiento_cetpro =
+    enut_ready %>%
+    subset(15<=edad&edad<=19) %>%
+    svyciprop( ~ cetpro, .),
+  participacion_sindicato =
+    enut_ready %>%
+    subset(12<=edad&edad<=17) %>%
+    svyciprop( ~ sindicato, .),
+  tiempo_recreativo =
+    enut_ready %>%
+    subset(12<=edad&edad<=17) %>%
+    svymean( ~ tiempo.libre, .),    
+  voluntariado =
+    enut_ready %>%
+    subset(12<=edad&edad<=17) %>%
+    svyciprop( ~ voluntario, .)
+)
 
-colnames(tmp.estimates) <- c("valor", "CI95.Inf", "CI95.Sup")
+indicators_all <- bind_plans(
+  endes_indicators,
+  enaho_indicators,
+  ece_indicators,
+  enares_indicators
+)
+
+indicators_point.CI <- drake_plan(
+  point.CI = svy2pci(indicator__)
+)
+
+indicator_table <- evaluate_plan(
+  plan = indicators_point.CI,
+  wildcard = "indicator__",
+  values = indicators_all$target
+)
+
+# 
+# config <- drake_config(endes_plan)
+# vis_drake_graph(config)
+# 
+# # Para despues:
+# #svyby(~nhijos, ~estrato.region, design = dsalud.natalidad, svymean, na.rm = T)
+# #svyby(~nhijos, ~estrato.region, design = subset(dsalud.natalidad, !is.na(nhijos)), svymean)
+# 
+# lapply(svy2pci) %>% do.call(rbind, .) -> tmp.estimates
+# 
+# colnames(tmp.estimates) <- c("valor", "CI95.Inf", "CI95.Sup")
