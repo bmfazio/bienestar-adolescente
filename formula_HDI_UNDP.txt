@@ -1,3 +1,5 @@
+http://hdr.undp.org/sites/default/files/hdr_2013_en_technotes.pdf
+
 HDI = geometric mean of normalized indices for each dimension
 
 Step 1. Creating the dimension indices

@@ -5,6 +5,7 @@ library(drake)
 library(readxl)
 library(survey)
 library(stringi)
+library(openxlsx)
 library(data.table)
 
 options(encoding = "utf8")
@@ -59,4 +60,14 @@ body(svyciprop)[[6]] <- substitute(names(rval) <- paste(deparse(formula[[2]]),co
   x <- ifelse(is.na(x),0,x)
   y <- ifelse(is.na(y),0,y)
   x+y
+}
+
+# Normalize indicators
+normind <- function(x, max, min) {
+  xn <- (x - min)/(max - min)
+  case_when(
+    xn > 1 ~ 1,
+    xn < 0 ~ 0,
+    TRUE ~ xn
+  )
 }

@@ -1,15 +1,18 @@
 enut_load <- drake_plan(
   enut200 =
     import(
-      file_in("INEIDIR__/enut/Modulo126/02_CAPITULO_200.sav"),
-      setclass = "data.table") %>%
-    mutate(id = paste(CONGLOMERADO,NUMVIVREM,NSELV,HOGAR,P200_ID)),
+      file_in("INEIDIR__/enut/Modulo126/02_CAPITULO_200.sav")) %>%
+    mutate(id = paste(CONGLOMERADO,NUMVIVREM,NSELV,HOGAR,P200_ID)) %>% as.data.table,
   enut500 =
     import(
-      file_in("INEIDIR__/enut/Modulo129/05_CAPITULO_500.sav"),
-      setclass = "data.table") %>%
-    mutate(id = paste(CONGLOMERADO,NUMVIVREM,NSELV,HOGAR,P500_C))
-)
+      file_in("INEIDIR__/enut/Modulo129/05_CAPITULO_500.sav")) %>%
+    mutate(id = paste(CONGLOMERADO,NUMVIVREM,NSELV,HOGAR,P500_C)) %>%
+    as.data.table
+) %>%
+  evaluate_plan(
+    rules = list(INEIDIR__ = ineidir),
+    expand = FALSE
+  )
   
 enut_merge <- drake_plan(
   enut_ready =

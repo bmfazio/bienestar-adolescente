@@ -10,10 +10,10 @@ endes_load <- drake_plan(
       file_in("INEIDIR__/endes/2017/Modulo66/REC0111.SAV"),
       setclass = "data.table"),
   # Reproduction/Contraception
-  rec21 =
-    import(
-      file_in("INEIDIR__/endes/2017/Modulo67/REC21.SAV"),
-      setclass = "data.table"),
+  # rec21 =
+  #   import(
+  #     file_in("INEIDIR__/endes/2017/Modulo67/REC21.SAV"),
+  #     setclass = "data.table"),
   re223132 =
     import(
       file_in("INEIDIR__/endes/2017/Modulo67/RE223132.SAV"),
@@ -44,10 +44,10 @@ endes_load <- drake_plan(
       file_in("INEIDIR__/endes/2017/Modulo70/REC42.SAV"),
       setclass = "data.table"),
   # Mortalidad materna
-  rec83 =
-    import(
-      file_in("INEIDIR__/endes/2017/Modulo73/REC83.SAV"),
-      setclass = "data.table"),
+  # rec83 =
+  #   import(
+  #     file_in("INEIDIR__/endes/2017/Modulo73/REC83.SAV"),
+  #     setclass = "data.table"),
   # Violencia domestica
   rec84dv =
     import(

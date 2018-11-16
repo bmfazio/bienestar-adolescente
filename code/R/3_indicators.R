@@ -80,7 +80,7 @@ enaho_indicators <- drake_plan(
 )
 
 ece_indicators <- drake_plan(
-  competenca_lect.mate =
+  competencia_lect.mate =
     mean(ece_ready$Satisfactorio)
 )
 
@@ -133,31 +133,11 @@ enut_indicators <- drake_plan(
     svyciprop( ~ voluntario, .)
 )
 
-indicators_all <- bind_plans(
+plan_indicators <- bind_plans(
   endes_indicators,
   enaho_indicators,
   ece_indicators,
-  enares_indicators
+  enares_indicators,
+  eti_indicators,
+  enut_indicators
 )
-
-indicators_point.CI <- drake_plan(
-  point.CI = svy2pci(indicator__)
-)
-
-indicator_table <- evaluate_plan(
-  plan = indicators_point.CI,
-  wildcard = "indicator__",
-  values = indicators_all$target
-)
-
-# 
-# config <- drake_config(endes_plan)
-# vis_drake_graph(config)
-# 
-# # Para despues:
-# #svyby(~nhijos, ~estrato.region, design = dsalud.natalidad, svymean, na.rm = T)
-# #svyby(~nhijos, ~estrato.region, design = subset(dsalud.natalidad, !is.na(nhijos)), svymean)
-# 
-# lapply(svy2pci) %>% do.call(rbind, .) -> tmp.estimates
-# 
-# colnames(tmp.estimates) <- c("valor", "CI95.Inf", "CI95.Sup")
