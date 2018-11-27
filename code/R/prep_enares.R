@@ -5,6 +5,10 @@ enares_load <- drake_plan(
       setclass = "data.table"),
   enares_ready =
     enares200[,.(
+      region =
+        case_when(
+          DIREED == "1501" ~ "Lima metropolitana",
+          TRUE ~ CCDD),
       psu = as.numeric(factor(COD_MOD)),
       peso = Factor_Alumnos,
       estrato = putlabel(AREA),
@@ -43,3 +47,9 @@ enares_load <- drake_plan(
     rules = list(INEIDIR__ = ineidir),
     expand = FALSE
   )
+
+
+
+a <- read_xlsx("D:/datasets/minedu/ece/Relación de DREy UGEL 20-06-2016.xlsx")[,-1] %>% as.data.table
+
+unique(a[,.(`COD DRE`,DENOMINACIÓN)])

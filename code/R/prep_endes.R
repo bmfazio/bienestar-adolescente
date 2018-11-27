@@ -9,11 +9,11 @@ endes_load <- drake_plan(
     import(
       file_in("INEIDIR__/endes/2017/Modulo66/REC0111.SAV"),
       setclass = "data.table"),
-  # Reproduction/Contraception
-  # rec21 =
-  #   import(
-  #     file_in("INEIDIR__/endes/2017/Modulo67/REC21.SAV"),
-  #     setclass = "data.table"),
+  # Household data
+  rech23 =
+    import(
+      file_in("INEIDIR__/endes/2017/Modulo65/RECH23.SAV"),
+      setclass = "data.table"),
   re223132 =
     import(
       file_in("INEIDIR__/endes/2017/Modulo67/RE223132.SAV"),
@@ -63,6 +63,7 @@ endes_merge <- drake_plan(
   # Cuestionarios exclusivos para mujer
   endes_mujer = (
     rec0111 %>%
+      merge(rech23, by.x = "hhid", by.y = "HHID") %>%
       merge(re223132, by = "CASEID", all.x = T) %>%
       merge(re516171, by = "CASEID", all.x = T) %>%
       merge(re758081, by = "CASEID", all.x = T) %>%
@@ -71,6 +72,7 @@ endes_merge <- drake_plan(
     )[,.(
       psuid = V021,
       peso = V005/10**6,
+      region = putlabel(SHREGION),
       estrato.region = putlabel(V023),
       estrato.urbrur = V022,
       gedad = putlabel(V013),
@@ -90,6 +92,12 @@ endes_merge <- drake_plan(
       anemia = as.numeric(V457<4),
       imc = ifelse(V445 == 9998, NA, V445)
       )] %>%
+    mutate(
+      region = case_when(
+        estrato.region == "Lima" & region == "Lima metropolitana" ~ region,
+        TRUE ~ estrato.region
+      )
+    ) %>%
     svydesign(ids =~ psuid,
               strata =~ estrato.region + estrato.urbrur,
               weights =~ peso,
@@ -97,10 +105,12 @@ endes_merge <- drake_plan(
   # Cuestionarios de salud
   endes_salud = (
     csalud01 %>%
+      merge(rech23, by = "HHID") %>%
       merge(rech0, by = "HHID", all.x = TRUE)
     )[!is.na(PESO15_AMAS), .(
       psuid = HV021,
       peso = PESO15_AMAS/10**6,
+      region = putlabel(SHREGION),
       estrato.region = putlabel(HV023),
       estrato.urbrur = HV022,
       sexo = putlabel(QSSEXO),
@@ -137,7 +147,13 @@ endes_merge <- drake_plan(
           TRUE ~ NA_real_),
       v.golpe = as.numeric(QS710>1),
       v.arma = as.numeric(QS711>1)
-      )] %>%
+      )]%>%
+    mutate(
+      region = case_when(
+        estrato.region == "Lima" & region == "Lima metropolitana" ~ region,
+        TRUE ~ estrato.region
+        )
+      ) %>%
     svydesign(ids =~ psuid,
               strata =~ estrato.region + estrato.urbrur,
               weights =~ peso,

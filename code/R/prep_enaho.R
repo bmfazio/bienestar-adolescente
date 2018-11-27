@@ -6,6 +6,7 @@ enaho_load <- drake_plan(
     import(
       file_in("INEIDIR__/enaho/2017/603-Modulo02/Enaho01-2017-200.sav")) %>%
     mutate(
+      region = substr(UBIGEO, 1, 2),
       hh = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR),
       id = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR, CODPERSO)) %>%
     as.data.table,
@@ -41,6 +42,8 @@ enaho_merge <- drake_plan(
   enaho_ready =
     enaho01.200[,.(
       id, hh,
+      region.25 = region,
+      region.css = DOMINIO,
       psu = CONGLOME,
       stratum = ESTRATO,
       weight = FACPOB07,
@@ -94,6 +97,12 @@ enaho_merge <- drake_plan(
       pobreza = POBREZA
       )],
       by="hh", all.x = TRUE) %>%
+    mutate(
+      region = case_when(
+        region.25 == "15" & region.css == 8 ~ "Lima metropolitana",
+        TRUE ~ region.25
+        )
+      ) %>%
     svydesign(ids =~ psu,
               strata =~ stratum,
               weights =~ weight,

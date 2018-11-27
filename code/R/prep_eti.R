@@ -7,6 +7,11 @@ eti_load <- drake_plan(
     eti.ninhos[,.(
       psu = QHCONGLOMERADO,
       peso = FACTOREXP_NIÑOS,
+      region =
+        case_when(
+          QHDEPARTAMENTO=="LIMA" & DOMINIO==8 ~ "Lima metropolitana",
+          TRUE ~ QHDEPARTAMENTO
+        ),
       estrato1 = QHDEPARTAMENTO,
       estrato2 = ESTRATO,
       sexo = putlabel(QC_SEXO),

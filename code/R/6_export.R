@@ -16,4 +16,5 @@ plan_export <- drake_plan (
       file_out("output/indice_adolescente.xlsx"),
       starCol = 3, startRow = 2
       )
+  
 )
