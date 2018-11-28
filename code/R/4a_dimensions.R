@@ -159,7 +159,7 @@ plan_dimensions <- drake_plan(
          lower = 0, upper = 100),
     list(nombre = "% adolescentes que usaron Internet en el último mes",
          fuente = "ENAHO 2017",
-         lower = 0, upper = 100)
+         lower = 100, upper = 0)
     ),
   
   tabla_normalizada =

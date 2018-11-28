@@ -38,8 +38,8 @@ export_all <- function(outfile, input_indicadores, input_indices){
              `Indicador` = nombre,
              `Valor` = ind.y,
              `+/-` = error.y,
-             `L. inf` = upper.x,
-             `L. sup` = lower.x,
+             `L inf` = upper.x,
+             `L sup` = lower.x,
              `Norm.` = norm.y,
              `Fuente` = fuente.x)
     
@@ -71,7 +71,7 @@ export_all <- function(outfile, input_indicadores, input_indices){
     setColumnWidth(sheet, colIndex = 2, colWidth = 15) #108 px
     setColumnWidth(sheet, colIndex = 3, colWidth = 70.5)
     setColumnWidth(sheet, colIndex = 4:8, colWidth = 7)
-    setColumnWidth(sheet, colIndex = 9, colWidth = 13)
+    setColumnWidth(sheet, colIndex = 9, colWidth = 14)
     setColumnWidth(sheet, colIndex = 10, colWidth = 3)
     setColumnWidth(sheet, colIndex = 11, colWidth = 15)
     setColumnWidth(sheet, colIndex = 12, colWidth = 7)
