@@ -19,6 +19,10 @@ endes_indicators <- drake_plan(
     endes_salud %>%
     subset(15<=edad&edad<=19) %>%
     svy_prop(~ region, ~tabaco.30d),
+  prevalencia_tab.alc30d =
+    endes_salud %>%
+    subset(15<=edad&edad<=19) %>%
+    svy_prop(~ region, ~(tabaco.30d+alc.30d) > 0),
   prevalencia_condon =
     endes_mujer %>%
     subset(gedad == "15-19" & inisex > 0) %>%
@@ -81,9 +85,13 @@ enaho_indicators <- drake_plan(
 )
 
 ece_indicators <- drake_plan(
-  competencia_lect.mate =
+  competencia_mate =
     data.frame(desag = ece_ready$region,
-               ind = ece_ready$global,
+               ind = ece_ready$math,
+               se = 0),
+  competencia_lect =
+    data.frame(desag = ece_ready$region,
+               ind = ece_ready$read,
                se = 0)
 )
 
@@ -92,6 +100,10 @@ enares_indicators <- drake_plan(
     enares_ready %>%
     svy_prop(~region,
              ~I((casa.v.emo+casa.v.fis+cole.v.emo+cole.v.fis)>0)),
+  violencia_no.bulli =
+    enares_ready %>%
+    svy_prop(~region,
+             ~I((casa.v.emo+casa.v.fis)>0)),
   violencia_bullying =
     enares_ready %>%
     svy_prop(~region,

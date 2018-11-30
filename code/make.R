@@ -2,7 +2,8 @@ options(encoding = "utf8")
 source(file.path("R","1_setup.R"))
 source(file.path("R","2_dataprep.R"))
 source(file.path("R","3a_indicators.R"))
-source(file.path("R","4a_dimensions.R"))
+#source(file.path("R","4a_dimensions.R"))
+source(file.path("R","4b_dimensions.R"))
 source(file.path("R","5a_index.R"))
 source(file.path("R","6_export.R"))
 
@@ -25,29 +26,35 @@ cbind(
 indices_final %>%
   filter(dimension == "SALUD" &
            !(desag %in% c("HOMBRE", "MUJER"))) %>%
+  select(-dimension) %>%
   arrange(-indice),
 
 indices_final %>%
   filter(dimension == "EDUCACION" &
            !(desag %in% c("HOMBRE", "MUJER"))) %>%
+  select(-dimension) %>%
   arrange(-indice),
 
 indices_final %>%
   filter(dimension == "SEGURIDAD" &
            !(desag %in% c("HOMBRE", "MUJER"))) %>%
+  select(-dimension) %>%
   arrange(-indice),
 
 indices_final %>%
   filter(dimension == "TRABAJO" &
            !(desag %in% c("HOMBRE", "MUJER"))) %>%
+  select(-dimension) %>%
   arrange(-indice),
 
 indices_final %>%
   filter(dimension == "PARTICIPACION" &
            !(desag %in% c("HOMBRE", "MUJER"))) %>%
+  select(-dimension) %>%
   arrange(-indice),
 
 indices_final %>%
   filter(dimension == "GLOBAL" &
            !(desag %in% c("HOMBRE", "MUJER"))) %>%
+  select(-dimension) %>%
   arrange(-indice)) %>% write.xlsx("output/ranking.xlsx")
