@@ -14,7 +14,6 @@ pkgconfig::set_config("drake::strings_in_dots" = "literals")
 
 datadir <- read_yaml("config.yaml")[[paste(Sys.info(),collapse="|")]]
 
-# ENDES subdir
 if(length(datadir) == 1 & any(dir.exists(datadir))){
   ineidir <- file.path(datadir, "inei")
   minedudir <- file.path(datadir, "minedu")
@@ -73,30 +72,7 @@ normind <- function(x, max, min) {
   )
 }
 
-# Radar plot
-coord_radar <- function (theta = "x", start = 0, direction = 1) {
-  theta <- match.arg(theta, c("x", "y"))
-  r <- if (theta == "x") "y" else "x"
-  ggproto("CordRadar", CoordPolar, theta = theta, r = r, start = start, 
-          direction = sign(direction),
-          is_linear = function(coord) TRUE)
-}
-RadarTheme <- theme(panel.background=element_blank(),
-                    plot.title= element_text(size = 20,face=c("bold","italic")),
-                    plot.margin = unit(rep(2.5,4), "cm"),
-                    aspect.ratio = 1,
-                    legend.position="bottom",
-                    legend.title=element_blank(),
-                    legend.direction="vertical",
-                    strip.text.x = element_text(size = rel(0.8)),
-                    axis.text.x = element_text(size = 12,face ="bold"),
-                    axis.ticks.y = element_blank(),
-                    axis.text.y = element_blank(),
-                    axis.line.x=element_line(size=0.5),
-                    panel.grid.major=element_line(size=0.3,linetype = 2,colour="grey"))
-
 # Custom svy processing
-# FALTA: cambiar nombres de columna para poder unir todo con mas facilidad
 svy_mean <- function(svyobj, desag, formulind){
   desagr <- svyby(formulind, desag, design = svyobj, svymean, na.rm = T)
   colnames(desagr) <- c("desag", "ind", "se")
@@ -114,7 +90,7 @@ svy_prop <- function(svyobj, desag, formulind){
   bind_rows(desagr, global)
 }
 
-# tabladores
+# Funciones de apoyo para tablas
 tabfun <- function(source, name, scale = 100) {
   cbind(
     nombre = name,
@@ -156,7 +132,7 @@ ubigeator <- function(x) {
     )
 }
 
-## ecsel
+# Excel export functions
 xlsx.addTitle <- function(sheet, rowI, title, titleStyle, colI = 1){
   rows <-createRow(sheet, rowIndex=rowI)
   sheetTitle <- createCell(rows, colIndex=colI)

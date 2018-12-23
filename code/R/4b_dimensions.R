@@ -1,4 +1,4 @@
-# Modificado para retirar los indicadores inutiles
+# Los indicadores que se acordo excluir fueron comentados
 plan_dimensions <- drake_plan(
   tabla_interdimensional =
     rbind(
