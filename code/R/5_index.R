@@ -1,28 +1,27 @@
 plan_index <- drake_plan(
-  tabla_indice =
-    data.frame(
-      dimensiones = c(
-        "Salud",
-        "Educación",
-        "Seguridad",
-        "Trabajo",
-        "Participación",
-        "ÍNDICE GLOBAL"
-      ),
-      indice = c(
-        mean(tabla_salud$normalized),
-        mean(tabla_educacion$normalized),
-        mean(tabla_seguridad$normalized),
-        mean(tabla_trabajo$normalized),
-        mean(tabla_participacion$normalized),
-        0
+  
+  indices_dimension =
+    tabla_normalizada %>%
+    subset(!(nombre %in%
+               c("Tasa de desempleo adolescente",
+                 "% adolescentes involucrados en trabajo infantil (s/tiempo hogar)"))) %>%
+    group_by(desag, dimension) %>%
+    summarize(indice = mean(norm)),
+  
+  indices_final =
+    indices_dimension %>%
+    group_by(desag) %>%
+    summarize(indice = exp(mean(log(indice)))) %>%
+    cbind(dimension = "GLOBAL") %>%
+    bind_rows(indices_dimension) %>%
+    arrange(
+      desag,
+      match(dimension,
+            c("SALUD",
+              "EDUCACION",
+              "SEGURIDAD",
+              "TRABAJO",
+              "PARTICIPACION",
+              "GLOBAL"))
       )
-    ) %>%
-    (function(x){x[6,2] <- exp(mean(log(x[-6,2])));x})
 )
-
-# tabla_salud
-# tabla_educacion
-# tabla_seguridad
-# tabla_trabajo
-# tabla_participacion

@@ -1,150 +1,198 @@
+# Los indicadores que se acordo excluir fueron comentados
 plan_dimensions <- drake_plan(
-  tabla_salud = cbind(
-    data.frame(
-      indicator = c(
-        "Tasa de natalidad adolescente",
-        "Prevalencia de desnutrición o sobrepeso",
-        "Prevalencia de anemia",
-        "Prevalencia de consumo reciente de alcohol",
-        "Prevalencia de consumo reciente de tabaco",
-        "Proporción de adolescentes que usó condón en último encuentro sexual",
-        "Proporción de adolescentes sexualmente activos con método moderno"
-        )),
-    as.data.frame(matrix(c(
-      svy2pci(tasa_natalidad)*1000,
-      svy2pci(prevalencia_mala.nutricion)*100,
-      svy2pci(prevalencia_anemia)*100,
-      svy2pci(prevalencia_alcohol30d)*100,
-      svy2pci(prevalencia_tabaco30d)*100,
-      svy2pci(prevalencia_condon)*100,
-      svy2pci(prevalencia_metodo.moderno)*100
-      ),
-      ncol = 3,
-      byrow = TRUE,
-      dimnames = list(NULL, c("value", "lower95", "upper95"))
-    )),
-    good = c(
-      0, 0, 0, 0, 0, 100, 100),
-    bad = c(
-      100, 100, 100, 100, 100, 0, 0)
+  tabla_interdimensional =
+    rbind(
+      rbind(
+        tasa_natalidad %>%
+          tabfun("Tasa de natalidad adolescente", 1000),
+        prevalencia_mala.nutricion %>%
+          tabfun("Prevalencia de desnutrición o sobrepeso"),
+        prevalencia_anemia %>%
+          tabfun("Prevalencia de anemia"),
+        # prevalencia_alcohol30d %>%
+        #   tabfun("Prevalencia de consumo reciente de alcohol"),
+        # prevalencia_tabaco30d %>%
+        #   tabfun("Prevalencia de consumo reciente de tabaco"),
+        prevalencia_tab.alc30d %>%
+          tabfun("Prevalencia de consumo reciente de alcohol o tabaco"),
+        prevalencia_condon %>%
+          tabfun("Proporción de adolescentes que usó condón en último encuentro sexual"),
+        prevalencia_metodo.moderno %>%
+          tabfun("Proporción de adolescentes sexualmente activos con método moderno")
+        ) %>% cbind(dimension = "SALUD"),
+      rbind(
+        finalizacion_primaria %>%
+          tabfun("Tasa de finalización de educación primaria"),
+        finalizacion_secundaria %>%
+          tabfun("Tasa de finalización de educación secundaria"),
+        out_of_school %>%
+          tabfun("Tasa de adolescentes fuera del sistema educativo"),
+        matricula_superior %>%
+          tabfun("Tasa de matrícula bruta en educación superior"),
+        competencia_lect %>%
+          tabfun("Nivel de competencia en lectura", 1),
+        competencia_mate %>%
+          tabfun("Nivel de competencia en matemática", 1)
+        ) %>% cbind(dimension = "EDUCACION"),
+      rbind(
+        matrimonio_infantil %>%
+          tabfun("Menores de edad unidas"),
+        mujer_violentada %>%
+          tabfun("% adolescentes que han experimentado violencia por parte de su pareja"),
+        # violencia_cualquier %>%
+        #   tabfun("% adolescentes que han experimentado violencia"),
+        violencia_no.bulli %>%
+          tabfun("% adolescentes que han experimentado violencia (no bullying)"),
+        violencia_bullying %>%
+          tabfun("% adolescentes que reportaron ser víctimas de bullying"),
+        violencia_sexual %>%
+          tabfun("Violencia sexual ejercida por otra persona que no es su pareja"),
+        pobreza_monetaria %>%
+          tabfun("Proporción de adolescentes entre 15-19 en pobreza monetaria")
+        ) %>% cbind(dimension = "SEGURIDAD"),
+      rbind(
+        # horas_trabajo.hogar %>%
+        #   tabfun("Tiempo dedicado a tareas del hogar, no remunerado", 1),
+        # tinfantil_shogar %>%
+        #   tabfun("% adolescentes involucrados en trabajo infantil (s/tiempo hogar)"),
+        tinfantil_full %>%
+          tabfun("% adolescentes involucrados en trabajo infantil (c/tiempo hogar)"),
+        #desempleo_adolescente %>%
+        #   tabfun("Tasa de desempleo adolescente"),
+        porcentaje_nini %>%
+          tabfun("% adolescentes sin educación, empleo o formación (nini)")
+        # enrolamiento_cetpro %>%
+        #   tabfun("% adolescentes enrolados en programas de capacitacion tecnico vocacional")
+        ) %>% cbind(dimension = "TRABAJO"),
+      rbind(
+        participacion_sindicato %>%
+          tabfun("Participación de adolescentes en sindicatos"),
+        tiempo_recreativo %>%
+          tabfun("% adolescentes en actividades recreacionales por un periodo específico", 1),
+        voluntariado %>%
+          tabfun("Indicador de voluntariado"),
+        uso_internet %>%
+          tabfun("% adolescentes que usaron Internet en el último mes")
+        ) %>% cbind(dimension = "PARTICIPACION")
     ) %>%
-    mutate(
-      normalized = value %>% normind(max = good, min = bad)
-      ),
+    mutate(desag =
+             desag %>%
+             toupper %>%
+             iconv(from = "UTF-8",
+                   to = "ASCII//TRANSLIT") %>%
+             ubigeator),
   
-  tabla_educacion = cbind(
-    data.frame(
-      indicator = c(
-        "Tasa de finalización de educación primaria",
-        "Tasa de finalización de educación secundaria",
-        "Tasa de adolescentes fuera del sistema educativo",
-        "Tasa de matrícula bruta en educación superior",
-        "Nivel de competencia lectura/matematicas"
-        )),
-    as.data.frame(matrix(c(
-      svy2pci(finalizacion_primaria)*100,
-      svy2pci(finalizacion_secundaria)*100,
-      svy2pci(out_of_school)*100,
-      svy2pci(matricula_superior)*100,
-      svy2pci(competencia_lect.mate)
-      ),
-      ncol = 3,
-      byrow = TRUE,
-      dimnames = list(NULL, c("value", "lower95", "upper95"))
-    )),
-    good = c(
-      100, 100, 0, 100, 100),
-    bad = c(
-      0, 0, 100, 0, 0)
-    ) %>%
-    mutate(
-      normalized = value %>% normind(max = good, min = bad)
-      ),
+  tabla_limites = rbind.data.frame(
+    list(nombre = "Tasa de natalidad adolescente",
+         fuente = "ENDES 2017",
+         lower = 0, upper = 100),
+    list(nombre = "Prevalencia de desnutrición o sobrepeso",
+         fuente = "ENDES 2017",
+         lower = 0, upper = 100),
+    list(nombre = "Prevalencia de anemia",
+         fuente = "ENDES 2017",
+         lower = 0, upper = 100),
+    list(nombre = "Prevalencia de consumo reciente de alcohol",
+         fuente = "ENDES 2017",
+         lower = 0, upper = 100),
+    list(nombre = "Prevalencia de consumo reciente de tabaco",
+         fuente = "ENDES 2017",
+         lower = 0, upper = 100),
+    list(nombre = "Prevalencia de consumo reciente de alcohol o tabaco",
+         fuente = "ENDES 2017",
+         lower = 0, upper = 100),
+    list(nombre = "Proporción de adolescentes que usó condón en último encuentro sexual",
+         fuente = "ENDES 2017",
+         lower = 100, upper = 0),
+    list(nombre = "Proporción de adolescentes sexualmente activos con método moderno",
+         fuente = "ENDES 2017",
+         lower = 100, upper = 0),
+    list(nombre = "Tasa de finalización de educación primaria",
+         fuente = "ENAHO 2017",
+         lower = 100, upper = 0),
+    list(nombre = "Tasa de finalización de educación secundaria",
+         fuente = "ENAHO 2017",
+         lower = 100, upper = 0),
+    list(nombre = "Tasa de adolescentes fuera del sistema educativo",
+         fuente = "ENAHO 2017",
+         lower = 0, upper = 100),
+    list(nombre = "Tasa de matrícula bruta en educación superior",
+         fuente = "ENAHO 2017",
+         lower = 100, upper = 0),
+    list(nombre = "Nivel de competencia lectura/matematicas",
+         fuente = "ECE 2016",
+         lower = 100, upper = 0),
+    list(nombre = "Nivel de competencia en lectura",
+         fuente = "ECE 2016",
+         lower = 100, upper = 0),
+    list(nombre = "Nivel de competencia en matemática",
+         fuente = "ECE 2016",
+         lower = 100, upper = 0),
+    list(nombre = "Menores de edad unidas",
+         fuente = "ENDES 2017",
+         lower = 0, upper = 100),
+    list(nombre = "% adolescentes que han experimentado violencia por parte de su pareja",
+         fuente = "ENDES 2017",
+         lower = 0, upper = 100),
+    list(nombre = "% adolescentes que han experimentado violencia",
+         fuente = "ENARES 2015",
+         lower = 0, upper = 100),
+    list(nombre = "% adolescentes que han experimentado violencia (no bullying)",
+         fuente = "ENARES 2015",
+         lower = 0, upper = 100),
+    list(nombre = "% adolescentes que reportaron ser víctimas de bullying",
+         fuente = "ENARES 2015",
+         lower = 0, upper = 100),
+    list(nombre = "Violencia sexual ejercida por otra persona que no es su pareja",
+         fuente = "ENARES 2015",
+         lower = 0, upper = 100),
+    list(nombre = "Proporción de adolescentes entre 15-19 en pobreza monetaria",
+         fuente = "ENAHO 2017",
+         lower = 0, upper = 100),
+    list(nombre = "Tiempo dedicado a tareas del hogar, no remunerado",
+         fuente = "ETI 2015",
+         lower = 0, upper = 36),
+    list(nombre = "% adolescentes involucrados en trabajo infantil (s/tiempo hogar)",
+         fuente = "ENAHO 2017",
+         lower = 0, upper = 100),
+    list(nombre = "% adolescentes involucrados en trabajo infantil (c/tiempo hogar)",
+         fuente = "ENAHO 2017",
+         lower = 0, upper = 100),
+    list(nombre = "Tasa de desempleo adolescente",
+         fuente = "ENAHO 2017",
+         lower = 0, upper = 100),
+    list(nombre = "% adolescentes sin educación, empleo o formación (nini)",
+         fuente = "ENAHO 2017",
+         lower = 0, upper = 100),
+    list(nombre = "% adolescentes enrolados en programas de capacitacion tecnico vocacional",
+         fuente = "ENUT 2010",
+         lower = 0, upper = 100),
+    list(nombre = "Participación de adolescentes en sindicatos",
+         fuente = "ENUT 2010",
+         lower = 100, upper = 0),
+    list(nombre = "% adolescentes en actividades recreacionales por un periodo específico",
+         fuente = "ENUT 2010",
+         lower = 100, upper = 0),
+    list(nombre = "Indicador de voluntariado",
+         fuente = "ENUT 2010",
+         lower = 100, upper = 0),
+    list(nombre = "% adolescentes que usaron Internet en el último mes",
+         fuente = "ENAHO 2017",
+         lower = 100, upper = 0)
+    ),
   
-  tabla_seguridad = cbind(
-    data.frame(
-      indicator = c(
-        "Menores de edad unidas",
-        "% adolescentes que han experimentado violencia por parte de su pareja",
-        "% adolescentes que han experimentado violencia",
-        "% adolescentes que reportaron ser víctimas de bullying",
-        "Violencia sexual ejercida por otra persona que no es su pareja",
-        "Proporción de adolescentes entre 15-19 en pobreza monetaria*"
-        )),
-    as.data.frame(matrix(c(
-      svy2pci(matrimonio_infantil)*100,
-      svy2pci(mujer_violentada)*100,
-      svy2pci(violencia_cualquier)*100,
-      svy2pci(violencia_bullying)*100,
-      svy2pci(violencia_sexual)*100,
-      svy2pci(pobreza_monetaria)*100
-      ),
-      ncol = 3,
-      byrow = TRUE,
-      dimnames = list(NULL, c("value", "lower95", "upper95"))
-    )),
-    good = rep(0, 6),
-    bad = rep(100, 6)
-    ) %>%
-    mutate(
-      normalized = value %>% normind(max = good, min = bad)
-      ),
-
-  tabla_trabajo = cbind(
-    data.frame(
-      indicator = c(
-        "Tiempo dedicado a tareas del hogar, no remunerado",
-        "% adolescentes involucrados en trabajo infantil (s/tiempo hogar)",
-        "% adolescentes involucrados en trabajo infantil (c/tiempo hogar)",
-        "Tasa de desempleo adolescente",
-        "% adolescentes sin educación, empleo o formación (nini)",
-        "% adolescentes enrolados en programas de capacitacion tecnico vocacional"
-        )),
-    as.data.frame(matrix(c(
-      svy2pci(horas_trabajo.hogar),
-      svy2pci(tinfantil_shogar)*100,
-      svy2pci(tinfantil_full)*100,
-      svy2pci(desempleo_adolescente)*100,
-      svy2pci(porcentaje_nini)*100,
-      svy2pci(enrolamiento_cetpro)*100
-      ),
-      ncol = 3,
-      byrow = TRUE,
-      dimnames = list(NULL, c("value", "lower95", "upper95"))
-    )),
-    good = rep(0, 6),
-    bad = rep(100, 6)
-    ) %>%
-    mutate(
-      normalized = value %>% normind(max = good, min = bad)
-      ),
-
-  tabla_participacion = cbind(
-    data.frame(
-      indicator = c(
-        "Participación de adolescentes en sindicatos",
-        "% adolescentes en actividades recreacionales/sociales por un periodo específico durante la semana",
-        "Indicador de voluntariado",
-        "% adolescentes que usaron Internet en el último mes"
-        )),
-    as.data.frame(matrix(c(
-      svy2pci(participacion_sindicato)*100,
-      svy2pci(tiempo_recreativo),
-      svy2pci(voluntariado)*100,
-      svy2pci(uso_internet)*100
-      ),
-      ncol = 3,
-      byrow = TRUE,
-      dimnames = list(NULL, c("value", "lower95", "upper95"))
-    )),
-    good = rep(100, 4),
-    bad = rep(0, 4)
-    ) %>%
-    mutate(
-      normalized = value %>% normind(max = good, min = bad)
-      )
+  tabla_normalizada =
+    tabla_interdimensional %>%
+    left_join(tabla_limites, by = "nombre") %>%
+    mutate(norm = ind %>% normind(lower, upper)) %>%
+    select(
+      desag,
+      dimension,
+      nombre,
+      ind,
+      error,
+      lower,
+      upper,
+      norm,
+      fuente)
 )
-
-# # Para despues:
-# #svyby(~nhijos, ~estrato.region, design = dsalud.natalidad, svymean, na.rm = T)
-# #svyby(~nhijos, ~estrato.region, design = subset(dsalud.natalidad, !is.na(nhijos)), svymean)

@@ -3,6 +3,7 @@ library(yaml)
 library(xlsx)
 library(dplyr)
 library(drake)
+library(intsvy)
 library(readxl)
 library(ggplot2)
 library(survey)
@@ -74,18 +75,32 @@ normind <- function(x, max, min) {
 
 # Custom svy processing
 svy_mean <- function(svyobj, desag, formulind){
-  desagr <- svyby(formulind, desag, design = svyobj, svymean, na.rm = T)
+  desagr <- svyby(formulind,
+                  desag,
+                  design = svyobj,
+                  svymean, na.rm = T,
+                  vartype = "se")
   colnames(desagr) <- c("desag", "ind", "se")
-  global <- svyby(formulind, ~as.factor("NACIONAL"), design = svyobj, svymean, na.rm = T)
+  global <- svyby(formulind,
+                  ~as.factor("NACIONAL"),
+                  design = svyobj,
+                  svymean, na.rm = T,
+                  vartype = "se")
   colnames(global) <- c("desag", "ind", "se")
   bind_rows(desagr, global)
-
 }
 
 svy_prop <- function(svyobj, desag, formulind){
-  desagr <- svyby(formulind, desag, design = svyobj, svyciprop, na.rm = T)
+  desagr <- svyby(formulind,
+                  desag,
+                  design = svyobj,
+                  svyciprop, na.rm = T,
+                  vartype = "se")
   colnames(desagr) <- c("desag", "ind", "se")
-  global <- svyby(formulind, ~as.factor("NACIONAL"), design = svyobj, svyciprop, na.rm = T)
+  global <- svyby(formulind, ~as.factor("NACIONAL"),
+                  design = svyobj,
+                  svyciprop, na.rm = T,
+                  vartype = "se")
   colnames(global) <- c("desag", "ind", "se")
   bind_rows(desagr, global)
 }
@@ -262,4 +277,58 @@ export_all <- function(outfile, input_indicadores, input_indices){
     }
   }
   xlsx::saveWorkbook(wb, outfile)
+}
+
+
+
+# PISA
+flt_conf <-
+  (function(){
+    tmp <- intsvy:::pisa2015_conf
+    tmp$parameters$cutoffs <- c(0, 326.00, 400.33, 475.10, 549.86, 624.63)
+    tmp$variables$pvlabelsuff <- "FLIT"
+    tmp})()
+
+pisa_flt <- function(data){
+  bysexo <- intsvy.ben.pv(pvlabel = "FLIT", cutoff = c(0, 400.33), by = "sexo",
+                          data = data, config = flt_conf) %>%
+    select(3:4) %>% slice(c(3,6)) %>% cbind(c("MUJER", "HOMBRE"))
+  colnames(bysexo) <- c("ind", "se", "desag")
+  global <- intsvy.ben.pv(pvlabel = "FLIT", cutoff = c(0, 400.33),
+                          data = data, config = flt_conf) %>%
+    select(2:3) %>% slice(3) %>% cbind("NACIONAL")
+  colnames(global) <- c("ind", "se", "desag")
+  bind_rows(bysexo, global) %>% select(desag, ind, se)
+}
+
+pisa_asp <- function(data){
+  bysexo <-
+    data %>%
+    mutate(aspira = ifelse(ST111Q01TA == 6, 1, 0)) %>%
+    intsvy.table(variable = "aspira", data = ., by = "ST004D01T", config = flt_conf) %>%
+    select(4:5) %>% slice(c(2,4)) %>% cbind(c("MUJER", "HOMBRE"))
+  colnames(bysexo) <- c("ind", "se", "desag")
+  global <-
+    data %>%
+    mutate(aspira = ifelse(ST111Q01TA == 6, 1, 0)) %>%
+    intsvy.table(variable = "aspira", data = ., config = flt_conf) %>%
+    select(3:4) %>% slice(2) %>% cbind("NACIONAL")
+  colnames(global) <- c("ind", "se", "desag")
+  bind_rows(bysexo, global) %>% select(desag, ind, se)
+}
+
+pisa_sat <- function(data){
+  bysexo <-
+    data %>%
+    mutate(satisf = ifelse(ST016Q01NA >= 6, 1, 0)) %>%
+    intsvy.table(variable = "satisf", data = ., by = "sexo", config = flt_conf) %>%
+    select(4:5) %>% slice(c(2,4)) %>% cbind(c("MUJER", "HOMBRE"))
+  colnames(bysexo) <- c("ind", "se", "desag")
+  global <-
+    data %>%
+    mutate(satisf = ifelse(ST016Q01NA >= 6, 1, 0)) %>%
+    intsvy.table(variable = "satisf", data = ., config = flt_conf) %>%
+    select(3:4) %>% slice(2) %>% cbind("NACIONAL")
+  colnames(global) <- c("ind", "se", "desag")
+  bind_rows(bysexo, global) %>% select(desag, ind, se)
 }

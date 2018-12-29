@@ -2,17 +2,22 @@ PARTICIPA
 Igualdad, confianza, participación en gobernabilidad - ICCS 2016
 Opinion considerada en hogar/colegio/comunidad - ICCS también, probablemente
 
+--- enontrado vvv
+
 --- listo
 SALUD
 Todo lo que falta me lo iba a dar Rocio y aun no lo ha hecho...
 
-EDUCACION
-Habilidades TIC - PISA tiene preguntas de "familiaridad"
-Aspiraciones educativas - PISA pregunta :3
-
-SEGURIDAD
-Tasa de violencia doméstica - usar datos Observatorio (denuncias PNP)
-Adolescentes que experimentan "conexion positiva" creo que PISA tenia algo - satisfaccion de vida
-
 OP ECON
 PISA tiene puntajes de Financial Literacy
+
+EDUCACION
+Aspiraciones educativas - PISA pregunta :3
+Habilidades TIC - PISA solo tiene preguntas de "familiaridad"
+	-	A que edad usaste por primera vez una computadora?
+	-	Cuando tengo problemas con un aparato digital, creo que yo puedo resolverlos
+	-	Leo información sobre aparatos digitales para ser independiente cuando tengo que usarlos
+
+SEGURIDAD
+Adolescentes que experimentan "conexion positiva" creo que PISA tenia algo - satisfaccion de vida
+Tasa de violencia doméstica - usar datos Observatorio (denuncias PNP)
