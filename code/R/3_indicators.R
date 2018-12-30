@@ -11,14 +11,6 @@ endes_indicators <- drake_plan(
     endes_mujer %>%
     subset(gedad == "15-19") %>%
     svy_prop(~ region, ~ anemia),
-  prevalencia_alcohol30d =
-    endes_salud %>%
-    subset(15<=edad&edad<=19) %>%
-    svy_prop(~ region, ~alc.30d),
-  prevalencia_tabaco30d =
-    endes_salud %>%
-    subset(15<=edad&edad<=19) %>%
-    svy_prop(~ region, ~tabaco.30d),
   prevalencia_tab.alc30d =
     endes_salud %>%
     subset(15<=edad&edad<=19) %>%

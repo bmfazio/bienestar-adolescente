@@ -3,16 +3,12 @@ plan_dimensions <- drake_plan(
   tabla_interdimensional =
     rbind(
       rbind(
-        tasa_natalidad %>%
+        tasa_natalidad %>% # SOLO MUJER / MAX REGION
           tabfun("Tasa de natalidad adolescente", 1000),
-        prevalencia_mala.nutricion %>%
+        prevalencia_mala.nutricion %>% # SOLO MUJER / MAX REGION
           tabfun("Prevalencia de desnutrición o sobrepeso"),
-        prevalencia_anemia %>%
+        prevalencia_anemia %>% # SOLO MUJER / MAX REGION
           tabfun("Prevalencia de anemia"),
-        # prevalencia_alcohol30d %>%
-        #   tabfun("Prevalencia de consumo reciente de alcohol"),
-        # prevalencia_tabaco30d %>%
-        #   tabfun("Prevalencia de consumo reciente de tabaco"),
         prevalencia_tab.alc30d %>%
           tabfun("Prevalencia de consumo reciente de alcohol o tabaco"),
         prevalencia_condon %>%

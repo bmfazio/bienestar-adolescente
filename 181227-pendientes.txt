@@ -1,3 +1,9 @@
+Crear todas las desagregaciones en 3_indicators.R
+	- Las funciones que procesan la data deberian recibir las variables clave en formato estandarizado
+	- Si la variable no esta presente, simplemente no se genera esa desagregacion
+	- Variables clave: sexo, region, provincia, distrito
+----
+
 PARTICIPA
 Igualdad, confianza, participación en gobernabilidad - ICCS 2016
 Opinion considerada en hogar/colegio/comunidad - ICCS también, probablemente
