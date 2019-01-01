@@ -2,9 +2,6 @@ plan_index <- drake_plan(
   
   indices_dimension =
     tabla_normalizada %>%
-    subset(!(nombre %in%
-               c("Tasa de desempleo adolescente",
-                 "% adolescentes involucrados en trabajo infantil (s/tiempo hogar)"))) %>%
     group_by(desag, dimension) %>%
     summarize(indice = mean(norm)),
   

@@ -155,13 +155,17 @@ svy_prop <- function(svyobj, desag, formulind){
 }
 
 # Funciones de apoyo para tablas
-tabfun <- function(source, name, scale = 100) {
+tabfun <- function(source, name, fuente,
+                   scale = 100,
+                   highbad = T) {
   cbind(
     nombre = name,
     source %>%
       mutate(ind = ind*scale, error = 1.96*se*scale) %>%
-      select(-se)
-  )  
+      select(-se),
+    fuente = fuente,
+    highbad = highbad
+  )
 }
 
 ubigeator <- function(x) {
@@ -243,8 +247,8 @@ export_all <- function(outfile, input_indicadores, input_indices){
              `Indicador` = nombre,
              `Valor` = ind.y,
              `+/-` = error.y,
-             `L inf` = upper.x,
-             `L sup` = lower.x,
+             `Mejor` = mejor.x,
+             `Peor` = peor.x,
              `Norm.` = norm.y,
              `Fuente` = fuente.x)
     
@@ -328,8 +332,6 @@ export_all <- function(outfile, input_indicadores, input_indices){
   xlsx::saveWorkbook(wb, outfile)
 }
 
-
-
 # PISA
 flt_conf <-
   (function(){
@@ -375,7 +377,7 @@ pisa_sat <- function(data){
   colnames(bysexo) <- c("ind", "se", "desag")
   global <-
     data %>%
-    mutate(satisf = ifelse(ST016Q01NA == 103, 1, 0)) %>%
+    mutate(satisf = ifelse(ST016Q01NA == 10, 1, 0)) %>%
     intsvy.table(variable = "satisf", data = ., config = flt_conf) %>%
     select(3:4) %>% slice(2) %>% cbind("NACIONAL")
   colnames(global) <- c("ind", "se", "desag")
@@ -396,3 +398,9 @@ decode_direed <- function(x) {
                       "SAN MARTÍN", "TACNA", "TUMBES", "UCAYALI"))
   dd[sapply(x, function(y)which(y==dd$codigo))]$nombre
 }
+
+c("AMAZONAS", "ANCASH", "APURIMAC", "AREQUIPA", "AYACUCHO", "CAJAMARCA", 
+"CALLAO", "CUSCO", "HUANCAVELICA", "HUANUCO", "ICA", "JUNIN", 
+"LA LIBERTAD", "LAMBAYEQUE", "LIMA REGION", "LIMA METROPOLITANA", 
+"LORETO", "MADRE DE DIOS", "MOQUEGUA", "PASCO", "PIURA", "PUNO", 
+"SAN MARTIN", "TACNA", "TUMBES", "UCAYALI") -> regiones
