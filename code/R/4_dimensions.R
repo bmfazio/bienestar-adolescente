@@ -1,13 +1,13 @@
-# Los indicadores que se acordo excluir fueron comentados
 plan_dimensions <- drake_plan(
   tabla_interdimensional =
     rbind(
       rbind(
-        tasa_natalidad %>% # SOLO MUJER / MAX REGION
+        # SOLO MUJER / MAX REGION
+        tasa_natalidad %>%
           tabfun("Tasa de natalidad adolescente", 1000),
-        prevalencia_mala.nutricion %>% # SOLO MUJER / MAX REGION
+        prevalencia_mala.nutricion %>%
           tabfun("Prevalencia de desnutrición o sobrepeso"),
-        prevalencia_anemia %>% # SOLO MUJER / MAX REGION
+        prevalencia_anemia %>%
           tabfun("Prevalencia de anemia"),
         prevalencia_tab.alc30d %>%
           tabfun("Prevalencia de consumo reciente de alcohol o tabaco"),
@@ -28,15 +28,15 @@ plan_dimensions <- drake_plan(
         competencia_lect %>%
           tabfun("Nivel de competencia en lectura", 1),
         competencia_mate %>%
-          tabfun("Nivel de competencia en matemática", 1)
+          tabfun("Nivel de competencia en matemática", 1),
+        aspira_superior %>%
+          tabfun("% que aspira a educación superior", 1)
         ) %>% cbind(dimension = "EDUCACION"),
       rbind(
         matrimonio_infantil %>%
           tabfun("Menores de edad unidas"),
         mujer_violentada %>%
           tabfun("% adolescentes que han experimentado violencia por parte de su pareja"),
-        # violencia_cualquier %>%
-        #   tabfun("% adolescentes que han experimentado violencia"),
         violencia_no.bulli %>%
           tabfun("% adolescentes que han experimentado violencia (no bullying)"),
         violencia_bullying %>%
@@ -44,21 +44,19 @@ plan_dimensions <- drake_plan(
         violencia_sexual %>%
           tabfun("Violencia sexual ejercida por otra persona que no es su pareja"),
         pobreza_monetaria %>%
-          tabfun("Proporción de adolescentes entre 15-19 en pobreza monetaria")
+          tabfun("Proporción de adolescentes entre 15-19 en pobreza monetaria"),
+        vida_satisfac %>%
+          tabfun("% completamenta satisfecho con su vida"),
+        pnp_denuncias %>%
+          tabfun("Denuncias por violencia doméstica x 1000 habitantes", 1)
         ) %>% cbind(dimension = "SEGURIDAD"),
       rbind(
-        # horas_trabajo.hogar %>%
-        #   tabfun("Tiempo dedicado a tareas del hogar, no remunerado", 1),
-        # tinfantil_shogar %>%
-        #   tabfun("% adolescentes involucrados en trabajo infantil (s/tiempo hogar)"),
         tinfantil_full %>%
           tabfun("% adolescentes involucrados en trabajo infantil (c/tiempo hogar)"),
-        #desempleo_adolescente %>%
-        #   tabfun("Tasa de desempleo adolescente"),
         porcentaje_nini %>%
-          tabfun("% adolescentes sin educación, empleo o formación (nini)")
-        # enrolamiento_cetpro %>%
-        #   tabfun("% adolescentes enrolados en programas de capacitacion tecnico vocacional")
+          tabfun("% adolescentes sin educación, empleo o formación (nini)"),
+        conoce_financiero %>%
+          tabfun("% con conocimiento financiero básico o mejor", 1)
         ) %>% cbind(dimension = "TRABAJO"),
       rbind(
         participacion_sindicato %>%
@@ -68,7 +66,11 @@ plan_dimensions <- drake_plan(
         voluntariado %>%
           tabfun("Indicador de voluntariado"),
         uso_internet %>%
-          tabfun("% adolescentes que usaron Internet en el último mes")
+          tabfun("% adolescentes que usaron Internet en el último mes"),
+        confianza_gob %>%
+          tabfun("% que confía mucho o plenamente en el gobierno nacional"),
+        opinion_cole %>%
+          tabfun("% que manifiesta que sus profesores los motivan con frecuencia a expresar sus opiniones")
         ) %>% cbind(dimension = "PARTICIPACION")
     ) %>%
     mutate(desag =

@@ -75,34 +75,83 @@ normind <- function(x, max, min) {
 
 # Custom svy processing
 svy_mean <- function(svyobj, desag, formulind){
-  desagr <- svyby(formulind,
-                  desag,
-                  design = svyobj,
-                  svymean, na.rm = T,
-                  vartype = "se")
-  colnames(desagr) <- c("desag", "ind", "se")
-  global <- svyby(formulind,
-                  ~as.factor("NACIONAL"),
+  desag[[2]] %>%
+  as.character %>%
+  stri_replace_all(replacement = " ", fixed = "+") %>%
+  paste(collapse=" ") %>%
+  stri_split_fixed(pattern = " ") %>% unlist %>%
+  subset(., nchar(.) > 0) -> desag
+  as.data.frame(do.call(expand.grid, rep(list(0:1), length(desag)))[-1,]) -> scenarios
+  
+  for(i in 1:ncol(scenarios)){
+    scenarios[, i] <- ifelse(scenarios[, i], desag[i], "")
+  }
+  scenarios %>%
+    apply(1, function(x)paste(x[x!=""],collapse="+")) %>%
+    paste("~",.) -> formuoli
+  
+  ssets <- list()
+  for(i in 1:length(formuoli)){
+    ssets[[i]] <- svyby(formulind, as.formula(formuoli[i]),
+                        design = svyobj,
+                        svymean, na.rm = T, vartype = "se")
+  }
+  lapply(ssets,
+         function(x){
+           n <- ncol(x)
+           cbind(desag = apply(as.data.frame(x[, -c(ncol(x)-1,ncol(x))]), 1,
+                               paste, collapse = "_"), x[, c(n-1,n)]) -> x
+           colnames(x) <- c("desag", "ind", "se")
+           x
+           }) -> ssets
+  
+  global <- svyby(formulind, ~as.factor("NACIONAL"),
                   design = svyobj,
                   svymean, na.rm = T,
                   vartype = "se")
   colnames(global) <- c("desag", "ind", "se")
-  bind_rows(desagr, global)
+  ssets[[length(ssets)+1]] <- global
+  bind_rows(ssets)
 }
 
 svy_prop <- function(svyobj, desag, formulind){
-  desagr <- svyby(formulind,
-                  desag,
-                  design = svyobj,
-                  svyciprop, na.rm = T,
-                  vartype = "se")
-  colnames(desagr) <- c("desag", "ind", "se")
+  desag[[2]] %>%
+  as.character %>%
+  stri_replace_all(replacement = " ", fixed = "+") %>%
+  paste(collapse=" ") %>%
+  stri_split_fixed(pattern = " ") %>% unlist %>%
+  subset(., nchar(.) > 0) -> desag
+  as.data.frame(do.call(expand.grid, rep(list(0:1), length(desag)))[-1,]) -> scenarios
+  
+  for(i in 1:ncol(scenarios)){
+    scenarios[, i] <- ifelse(scenarios[, i], desag[i], "")
+  }
+  scenarios %>%
+    apply(1, function(x)paste(x[x!=""],collapse="+")) %>%
+    paste("~",.) -> formuoli
+  
+  ssets <- list()
+  for(i in 1:length(formuoli)){
+    ssets[[i]] <- svyby(formulind, as.formula(formuoli[i]),
+                        design = svyobj,
+                        svyciprop, na.rm = T, vartype = "se")
+  }
+  lapply(ssets,
+         function(x){
+           n <- ncol(x)
+           cbind(desag = apply(as.data.frame(x[, -c(ncol(x)-1,ncol(x))]), 1,
+                               paste, collapse = "_"), x[, c(n-1,n)]) -> x
+           colnames(x) <- c("desag", "ind", "se")
+           x
+           }) -> ssets
+  
   global <- svyby(formulind, ~as.factor("NACIONAL"),
                   design = svyobj,
                   svyciprop, na.rm = T,
                   vartype = "se")
   colnames(global) <- c("desag", "ind", "se")
-  bind_rows(desagr, global)
+  ssets[[length(ssets)+1]] <- global
+  bind_rows(ssets)
 }
 
 # Funciones de apoyo para tablas
@@ -320,15 +369,30 @@ pisa_asp <- function(data){
 pisa_sat <- function(data){
   bysexo <-
     data %>%
-    mutate(satisf = ifelse(ST016Q01NA >= 6, 1, 0)) %>%
+    mutate(satisf = ifelse(ST016Q01NA == 10, 1, 0)) %>%
     intsvy.table(variable = "satisf", data = ., by = "sexo", config = flt_conf) %>%
     select(4:5) %>% slice(c(2,4)) %>% cbind(c("MUJER", "HOMBRE"))
   colnames(bysexo) <- c("ind", "se", "desag")
   global <-
     data %>%
-    mutate(satisf = ifelse(ST016Q01NA >= 6, 1, 0)) %>%
+    mutate(satisf = ifelse(ST016Q01NA == 103, 1, 0)) %>%
     intsvy.table(variable = "satisf", data = ., config = flt_conf) %>%
     select(3:4) %>% slice(2) %>% cbind("NACIONAL")
   colnames(global) <- c("ind", "se", "desag")
   bind_rows(bysexo, global) %>% select(desag, ind, se)
+}
+
+decode_direed <- function(x) {
+  dd <- data.table(codigo = c("0100", "0200", "0300", "0400", "0500", 
+                      "0600", "0701", "0800", "0900", "1000",
+                      "1100", "1200", "1300", "1400", "1501",
+                      "1502", "1600", "1700", "1800", "1900",
+                      "2000", "2100", "2200", "2300", "2400", "2500"),
+           nombre = c("AMAZONAS",  "ANCASH", "APURÍMAC", "AREQUIPA", "AYACUCHO",
+                      "CAJAMARCA", "CALLAO",  "CUSCO", "HUANCAVELICA", "HUÁNUCO",
+                      "ICA", "JUNÍN", "LA LIBERTAD",  "LAMBAYEQUE",
+                      "LIMA METROPOLITANA", "LIMA PROVINCIAS", "LORETO",
+                      "MADRE DE DIOS", "MOQUEGUA", "PASCO", "PIURA", "PUNO",
+                      "SAN MARTÍN", "TACNA", "TUMBES", "UCAYALI"))
+  dd[sapply(x, function(y)which(y==dd$codigo))]$nombre
 }

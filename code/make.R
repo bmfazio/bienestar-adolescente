@@ -16,7 +16,7 @@ plan <- bind_plans(
 
 make(plan)
 
-vis_drake_graph(drake_config(plan))
+#vis_drake_graph(drake_config(plan))
 
 # loadd(indices_final)
 # names(indices_final)

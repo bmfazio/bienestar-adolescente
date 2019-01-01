@@ -1,4 +1,5 @@
 endes_indicators <- drake_plan(
+  # ENDES MUJER
   tasa_natalidad =
     endes_mujer %>%
     subset(gedad == "15-19") %>%
@@ -11,10 +12,6 @@ endes_indicators <- drake_plan(
     endes_mujer %>%
     subset(gedad == "15-19") %>%
     svy_prop(~ region, ~ anemia),
-  prevalencia_tab.alc30d =
-    endes_salud %>%
-    subset(15<=edad&edad<=19) %>%
-    svy_prop(~ region, ~(tabaco.30d+alc.30d) > 0),
   prevalencia_condon =
     endes_mujer %>%
     subset(gedad == "15-19" & inisex > 0) %>%
@@ -30,59 +27,64 @@ endes_indicators <- drake_plan(
   mujer_violentada =
     endes_mujer %>%
     subset(gedad == "15-19") %>%
-    svy_prop(~ region, ~I(v.emoc==1|v.sex==1|v.fisi==1|v.fisigrav==1))
+    svy_prop(~ region, ~I(v.emoc==1|v.sex==1|v.fisi==1|v.fisigrav==1)),
+  # ENDES SALUD
+  prevalencia_tab.alc30d =
+    endes_salud %>%
+    subset(15<=edad&edad<=19) %>%
+    svy_prop(~ region+sexo, ~(tabaco.30d+alc.30d) > 0)
 )
 
 enaho_indicators <- drake_plan(
   finalizacion_primaria =
     enaho_ready %>%
     subset(12<=edad&edad<=13) %>%
-    svy_prop(~region, ~I(educ.aprobado >= 4 & educ.aprobado != 12)),
+    svy_prop(~region+sexo, ~I(educ.aprobado >= 4 & educ.aprobado != 12)),
   finalizacion_secundaria =
     enaho_ready %>%
     subset(17<=edad&edad<=18) %>%
-    svy_prop(~region, ~I(educ.aprobado >= 6 & educ.aprobado != 12)),
+    svy_prop(~region+sexo, ~I(educ.aprobado >= 6 & educ.aprobado != 12)),
   out_of_school =
     enaho_ready %>%
     subset(12<=edad&edad<=17) %>%
-    svy_prop(~region, ~!estudia.actual),
+    svy_prop(~region+sexo, ~!estudia.actual),
   matricula_superior =
   enaho_ready %>%
     subset(18<=edad&edad<=22) %>%
-    svy_prop(~region,
+    svy_prop(~region+sexo,
              ~I((educ.aprobado %in% c(8,10,11))|(educ.esteanho %in% 4:6))),
   pobreza_monetaria =
     enaho_ready %>%
     subset(15<=edad&edad<=19) %>%
-    svy_prop(~region, ~I(pobreza < 3)),
+    svy_prop(~region+sexo, ~I(pobreza < 3)),
   trabajo_infantil_enaho =
     enaho_ready %>%
     subset(12<=edad&edad<=17) %>%
-    svy_prop(~region, ~I(
+    svy_prop(~region+sexo, ~I(
       (12<=edad&edad<=13 & ((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=24))|
         (14<=edad&edad<=17 & ((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=36))
       )),
   desempleo_adolescente =
     enaho_ready %>%
     subset(15<=edad&edad<=19&((trab500.buscando&!trab500)|trab500)) %>%
-    svy_prop(~region, ~I(!trab500)),
+    svy_prop(~region+sexo, ~I(!trab500)),
   porcentaje_nini =
     enaho_ready %>%
     subset(15<=edad&edad<=19) %>%
-    svy_prop(~region, ~I(!estudia.actual&!trab500&!trab500.buscando)),
+    svy_prop(~region+sexo, ~I(!estudia.actual&!trab500&!trab500.buscando)),
   uso_internet =
     enaho_ready %>%
     subset(12<=edad&edad<=17) %>%
-    svy_prop(~region, ~internet.ultmes)
+    svy_prop(~region+sexo, ~internet.ultmes)
 )
 
 ece_indicators <- drake_plan(
   competencia_mate =
-    data.frame(desag = ece_ready$region,
+    data.frame(desag = ece_ready$desag,
                ind = ece_ready$math,
                se = 0),
   competencia_lect =
-    data.frame(desag = ece_ready$region,
+    data.frame(desag = ece_ready$desag,
                ind = ece_ready$read,
                se = 0)
 )
@@ -159,9 +161,21 @@ pnp_indicators <- drake_plan(
           tmp[,.(desag = "NACIONAL", ind = sum(Denuncias), se = 0)],
           tmp[,.(ind = sum(Denuncias), se = 0), .(desag = Departamento)],
           tmp[,.(ind = sum(Denuncias), se = 0), .(desag = toupper(Sexo))],
-          tmp[,.(ind = sum(Denuncias), se = 0), .(desag = paste(Departamento,toupper(Sexo)))])
+          tmp[,.(ind = sum(Denuncias), se = 0), .(desag = paste(Departamento,toupper(Sexo), sep = "_"))]) %>%
+          merge(censo_desag, by = "desag") %>%
+          transmute(desag, ind = ind*1000/pob, se)
         })()
-    
+)
+
+iccs_indicators <- drake_plan(
+  confianza_gob = 
+    iccs %>%
+    svy_prop(~sexo,
+             ~I((confianza_gob)<=2)),
+  opinion_cole =
+    iccs %>%
+    svy_prop(~sexo,
+             ~I((opinion_cole)==4))
 )
 
 plan_indicators <- bind_plans(
@@ -172,5 +186,6 @@ plan_indicators <- bind_plans(
   eti_indicators,
   enut_indicators,
   pisa_indicators,
-  pnp_indicators
+  pnp_indicators,
+  iccs_indicators
 )

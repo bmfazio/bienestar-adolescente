@@ -48,7 +48,7 @@ enaho_merge <- drake_plan(
       stratum = ESTRATO,
       weight = FACPOB07,
       edad = P208A,
-      sexo = putlabel(P207),
+      sexo = putlabel(P207) %>% toupper,
       trab200 = as.numeric(((2-P210)%+rmna%!(P211A%in%8:9))==2),
       trab200.tiempo = P211D
       )] %>%
@@ -99,8 +99,8 @@ enaho_merge <- drake_plan(
       by="hh", all.x = TRUE) %>%
     mutate(
       region = case_when(
-        region.25 == "15" & region.css == 8 ~ "Lima metropolitana",
-        TRUE ~ region.25
+        region.25 == "15" & region.css == 8 ~ "LIMA METROPOLITANA",
+        TRUE ~ region.25 %>% ubigeator
         )
       ) %>%
     svydesign(ids =~ psu,
