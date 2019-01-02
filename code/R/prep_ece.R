@@ -3,6 +3,7 @@ ece_load <- drake_plan(
     fread(
       file_in("MINEDUDIR__/ece/ECE_2016_2S_alumnos.csv")) %>%
     mutate(sexo = toupper(sexo)) %>%
+    mutate(Distrito = ifelse(Distrito == "ANCO_HUALLO", "ANCO-HUALLO", Distrito)) %>%
     as.data.table,
   ece_ready =
 rbind(

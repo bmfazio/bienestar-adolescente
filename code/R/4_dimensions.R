@@ -77,21 +77,21 @@ plan_dimensions <- drake_plan(
                  "ENAHO 2017"),
         porcentaje_nini %>%
           tabfun("% adolescentes sin educación, empleo o formación (nini)",
-                 "ENHO 2017"),
+                 "ENAHO 2017"),
         conoce_financiero %>%
           tabfun("% con conocimiento financiero suficiente",
                  "PISA 2015", scale = 1, highbad = F)
         ) %>% cbind(dimension = "TRABAJO"),
       rbind(
-        participacion_sindicato %>%
-          tabfun("Participación de adolescentes en sindicatos",
-                 "ENUT 2010", highbad = F),
+        # participacion_sindicato %>%
+        #   tabfun("Participación de adolescentes en sindicatos",
+        #          "ENUT 2010", highbad = F),
         tiempo_recreativo %>%
           tabfun("% adolescentes en actividades recreacionales por un periodo específico",
-                 "ENUT 2010", scale = 1, highbad = F),
-        voluntariado %>%
-          tabfun("Indicador de voluntariado",
                  "ENUT 2010", highbad = F),
+        # voluntariado %>%
+        #   tabfun("Indicador de voluntariado",
+        #          "ENUT 2010", highbad = F),
         uso_internet %>%
           tabfun("% adolescentes que usaron Internet en el último mes",
                  "ENAHO 2017", highbad = F),

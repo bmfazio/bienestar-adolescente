@@ -8,7 +8,10 @@ plan_index <- drake_plan(
   indices_final =
     indices_dimension %>%
     group_by(desag) %>%
-    summarize(indice = exp(mean(log(indice)))) %>%
+    summarize(indice =
+                exp(mean(log(
+                  ifelse(indice < 0.01, 0.01, indice)
+                  )))) %>%
     cbind(dimension = "GLOBAL") %>%
     bind_rows(indices_dimension) %>%
     arrange(

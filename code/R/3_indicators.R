@@ -129,10 +129,6 @@ eti_indicators <- drake_plan(
 )
 
 enut_indicators <- drake_plan(
-  enrolamiento_cetpro =
-    enut_ready %>%
-    subset(15<=edad&edad<=19) %>%
-    svy_prop(~sexo, ~cetpro),
   participacion_sindicato =
     enut_ready %>%
     subset(12<=edad&edad<=17) %>%
@@ -140,7 +136,7 @@ enut_indicators <- drake_plan(
   tiempo_recreativo =
     enut_ready %>%
     subset(12<=edad&edad<=17) %>%
-    svy_mean(~sexo, ~tiempo.libre),    
+    svy_prop(~sexo, ~I(tiempo.libre >= 22)),
   voluntariado =
     enut_ready %>%
     subset(12<=edad&edad<=17) %>%

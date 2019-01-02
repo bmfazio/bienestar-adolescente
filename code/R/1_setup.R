@@ -207,7 +207,7 @@ xlsx.addTitle <- function(sheet, rowI, title, titleStyle, colI = 1){
   setCellValue(sheetTitle[[1,1]], title)
   setCellStyle(sheetTitle[[1,1]], titleStyle)
 }
-export_all <- function(outfile, input_indicadores, input_indices){
+export_all <- function(outfile, input_indicadores, tab_model){
   wb <- createWorkbook(type="xlsx")
   
   # Styles
@@ -233,15 +233,16 @@ export_all <- function(outfile, input_indicadores, input_indices){
     posicion_tablas <- c(3, 2, 1)
 
     # Poner data
-    indicTable <- input_indicadores %>%
-      subset(desag == "NACIONAL") %>%
+    indicTable <- tab_model %>%
       left_join(
         input_indicadores %>%
           subset(desag == val_desagrega),
         by = "nombre") %>%
       mutate(ind.y = round(ind.y, 1),
              error.y = round(error.y, 1),
-             norm.y = round(norm.y, 2)
+             norm.y = round(norm.y, 2),
+             mejor.x = round(mejor.x, 1),
+             peor.x = round(peor.x, 1)
              ) %>%
       select(`Dimensión` = dimension.x,
              `Indicador` = nombre,
@@ -258,10 +259,28 @@ export_all <- function(outfile, input_indicadores, input_indices){
                    startColumn = posicion_tablas[2], 
                    colnamesStyle = TABLE_HEADERS)
     
-    indexTable <- input_indices %>%
-      subset(desag == val_desagrega) %>%
+    tmp.indices <- indicTable %>%
+      group_by(`Dimensión`) %>%
+      summarize(indice = mean(`Norm.`, na.rm = TRUE))
+    
+    indexTable <- tmp.indices %>%
+    summarize(indice =
+                exp(mean(log(
+                  ifelse(indice < 0.01, 0.01, indice)
+                  )))) %>%
+    cbind(`Dimensión` = "GLOBAL") %>%
+    bind_rows(tmp.indices) %>%
+    arrange(
+      match(`Dimensión`,
+            c("SALUD",
+              "EDUCACION",
+              "SEGURIDAD",
+              "TRABAJO",
+              "PARTICIPACION",
+              "GLOBAL"))
+      ) %>%
       mutate(indice = round(indice, 2)) %>%
-      select(`Dimensión` = dimension,
+      select(`Dimensión`,
              `Índice` = indice)
     
     indexTable %>%
@@ -324,7 +343,7 @@ export_all <- function(outfile, input_indicadores, input_indices){
     
     for(i in 1:6){
       CB.setFill(INDICES_CB,
-                 fill = Fill(foregroundColor = gradient01[indexTable[i,2]*100]),
+                 fill = Fill(foregroundColor = gradient01[indexTable[i,2]*100+1]),
                  rowIndex = i,
                  colIndex = 2)
     }
@@ -404,3 +423,77 @@ c("AMAZONAS", "ANCASH", "APURIMAC", "AREQUIPA", "AYACUCHO", "CAJAMARCA",
 "LA LIBERTAD", "LAMBAYEQUE", "LIMA REGION", "LIMA METROPOLITANA", 
 "LORETO", "MADRE DE DIOS", "MOQUEGUA", "PASCO", "PIURA", "PUNO", 
 "SAN MARTIN", "TACNA", "TUMBES", "UCAYALI") -> regiones
+
+###
+
+export_ranking <- function(outfile, tabrank){
+  colnames(tabrank) <-
+    c("SALUD", "",
+      "EDUCACION", "",
+      "SEGURIDAD", "",
+      "TRABAJO", "",
+      "PARTICIPACION", "",
+      "GLOBAL", "")
+  wb <- createWorkbook(type="xlsx")
+  
+  # Styles
+  gradient01 <- rev(union(colorRampPalette(c("green","yellow"))(50),colorRampPalette(c("yellow","red"))(52)))
+
+  TITLE_STYLE <-
+    CellStyle(wb) +
+    Font(wb, heightInPoints=14,
+         color="#010101", isBold=TRUE, underline=1)
+
+  TABLE_HEADERS <- CellStyle(wb) +
+    Font(wb, color = "#FEFEFE", isBold=TRUE) +
+    Fill(foregroundColor="#000000", backgroundColor="#000000",
+         pattern="SOLID_FOREGROUND") +
+    Alignment(wrapText=TRUE, horizontal="ALIGN_LEFT") +
+    Border(color="black", position=c("TOP", "BOTTOM"), 
+           pen=c("BORDER_THIN", "BORDER_THIN"))
+
+  # Diseno de hoja
+  sheet <- createSheet(wb, sheetName = "Ranking")
+  setZoom(sheet, numerator = 85, denominator = 100)
+  
+  tabrank %>%
+    addDataFrame(sheet, row.names = FALSE,
+                 startRow = 1,
+                 startColumn = 2, 
+                 colnamesStyle = TABLE_HEADERS)
+    
+  setColumnWidth(sheet, colIndex = 1, colWidth = 3) # 24 px
+  setColumnWidth(sheet, colIndex = c(2,4,6,8,10,12),
+                 colWidth = 18)
+  setColumnWidth(sheet, colIndex = c(2,4,6,8,10,12)+1,
+                 colWidth = 7)
+
+  INDICADORES_CB <- CellBlock(sheet,
+                              startRow = 2,
+                              startColumn = 2,
+                              noRows = nrow(tabrank),
+                              noColumns = ncol(tabrank),
+                              create = FALSE)
+    
+  BORDER_BODY <- Border(color = "black",
+                        position = c("BOTTOM", "LEFT", "TOP", "RIGHT"),
+                        pen = "BORDER_THIN")
+    
+  CB.setBorder(INDICADORES_CB,
+               border = BORDER_BODY,
+               rowIndex = rep(1:nrow(tabrank), each = ncol(tabrank)),
+               colIndex = rep(1:ncol(tabrank), times = nrow(tabrank)))
+    
+  for(j in 1:6){
+    for(i in 1:nrow(tabrank)){
+      CB.setFill(INDICADORES_CB,
+                 fill = Fill(foregroundColor =
+                               gradient01[(tabrank[i,j*2]*
+                                             100)%+rmna%1]),
+                 rowIndex = i,
+                 colIndex = j*2)
+    }
+  }
+    
+  xlsx::saveWorkbook(wb, outfile)
+}
