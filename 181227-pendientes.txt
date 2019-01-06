@@ -1,13 +1,3 @@
-Darle el formato adecuado a ECE, tendra que ser todo a mano
----
-
-Crear todas las desagregaciones en 3_indicators.R
-	- Las funciones que procesan la data deberian recibir las variables clave en formato estandarizado
-	- Si la variable no esta presente, simplemente no se genera esa desagregacion
-	- Variables clave: sexo, region, provincia, distrito
-
---- enontrado vvv
-
 --- listo
 SALUD
 Todo lo que falta me lo iba a dar Rocio y aun no lo ha hecho...
