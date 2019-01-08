@@ -1,3 +1,4 @@
+library(zoo)
 library(rio)
 library(yaml)
 library(xlsx)
@@ -207,7 +208,7 @@ xlsx.addTitle <- function(sheet, rowI, title, titleStyle, colI = 1){
   setCellValue(sheetTitle[[1,1]], title)
   setCellStyle(sheetTitle[[1,1]], titleStyle)
 }
-export_all <- function(outfile, input_indicadores, tab_model){
+export_all <- function(outfile, input_indicadores, tab_model, repnames = NULL){
   wb <- createWorkbook(type="xlsx")
   
   # Styles
@@ -253,6 +254,23 @@ export_all <- function(outfile, input_indicadores, tab_model){
              `Norm.` = norm.y,
              `Fuente` = fuente.x)
     
+    if(any(is.na(indicTable[indicTable$Indicador ==
+                            "Prevalencia de depresión" &
+                            is.na(indicTable$Valor), c(3,4,7)]))){
+      indicTable[indicTable$Indicador ==
+                   "Prevalencia de depresión" &
+                   is.na(indicTable$Valor), c(3,4,7)] <- c(0,0,1)
+      
+    }
+    if(any(is.na(indicTable[indicTable$Indicador ==
+                            "Tasa de mortalidad global" &
+                            is.na(indicTable$Valor), c(3,4,7)]))){
+      indicTable[indicTable$Indicador ==
+                   "Tasa de mortalidad global" &
+                   is.na(indicTable$Valor), c(3,4,7)] <- c(0,0,1)
+      
+    }
+        
     indicTable %>%
       addDataFrame(sheet, row.names = FALSE,
                    startRow = posicion_tablas[1],
@@ -293,10 +311,18 @@ export_all <- function(outfile, input_indicadores, tab_model){
     # Aplicar formatos
     xlsx.addTitle(sheet,
                   rowI = 1, colI = 2,
-                  title = val_desagrega, titleStyle = TITLE_STYLE)
+                  title = ifelse(is.null(repnames),
+                                 val_desagrega,
+                                 repnames %>%
+                                   filter(ubigeo == substr(val_desagrega,1,4)) %>%
+                                   transmute(a = paste(depa, prov,
+                                                       substr(val_desagrega, 6, 99))) %>%
+                                   pull(a)
+                                   ),
+                  titleStyle = TITLE_STYLE)
     
-    setColumnWidth(sheet, colIndex = 1, colWidth = 3) # 24 px
-    setColumnWidth(sheet, colIndex = 2, colWidth = 15) #108 px
+    setColumnWidth(sheet, colIndex = 1, colWidth = 3)
+    setColumnWidth(sheet, colIndex = 2, colWidth = 15)
     setColumnWidth(sheet, colIndex = 3, colWidth = 70.5)
     setColumnWidth(sheet, colIndex = 4:8, colWidth = 7)
     setColumnWidth(sheet, colIndex = 9, colWidth = 14)
@@ -336,12 +362,13 @@ export_all <- function(outfile, input_indicadores, tab_model){
     
     CB.setBorder(INDICES_CB,
                  border = BORDER_BODY,
-                 rowIndex = rep(1:6, each = 2),
-                 colIndex = rep(1:2, times = 6))
+                 rowIndex = rep(1:nrow(indexTable), each = 2),
+                 colIndex = rep(1:2, times = nrow(indexTable)))
     CB.setFont(INDICES_CB, Font(wb, isBold = T),
-               rowIndex = c(6,6), colIndex = 1:2)
+               rowIndex = c(nrow(indexTable),nrow(indexTable)),
+               colIndex = 1:2)
     
-    for(i in 1:6){
+    for(i in 1:nrow(indexTable)){
       CB.setFill(INDICES_CB,
                  fill = Fill(foregroundColor = gradient01[indexTable[i,2]*100+1]),
                  rowIndex = i,
@@ -496,4 +523,11 @@ export_ranking <- function(outfile, tabrank){
   }
     
   xlsx::saveWorkbook(wb, outfile)
+}
+
+fillNAs <- function(dataf){
+  for(i in 1:ncol(dataf)){
+    dataf[,i] <- na.locf(dataf[,i])
+  }
+  dataf
 }

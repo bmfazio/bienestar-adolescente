@@ -20,7 +20,11 @@ plan_dimensions <- drake_plan(
                  "ENDES 2017", highbad = F),
         prevalencia_metodo.moderno %>%
           tabfun("Proporción de adolescentes sexualmente activos con método moderno",
-                 "ENDES 2017", highbad = F)
+                 "ENDES 2017", highbad = F),
+        minsa_depresion %>%
+          tabfun("Prevalencia de depresión", "HIS 2017", scale = 1),
+        minsa_defunciones %>%
+          tabfun("Tasa de mortalidad global", "MINSA 2016", scale = 1)
         ) %>% cbind(dimension = "SALUD"),
       rbind(
         finalizacion_primaria %>%
@@ -115,7 +119,8 @@ plan_dimensions <- drake_plan(
       tabla_interdimensional %>%
       filter(desag %in% regiones) %>%
       group_by(nombre) %>%
-      summarize(minval = min(ind), maxval = max(ind)) -> tmp
+      summarize(minval = min(ind, na.rm = T),
+                maxval = max(ind, na.rm = T)) -> tmp
       tibble(nombre =
                tabla_interdimensional$nombre %>%
                unique %>%

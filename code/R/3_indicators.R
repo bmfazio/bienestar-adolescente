@@ -158,7 +158,7 @@ pnp_indicators <- drake_plan(
           tmp[,.(ind = sum(Denuncias), se = 0), .(desag = Departamento)],
           tmp[,.(ind = sum(Denuncias), se = 0), .(desag = toupper(Sexo))],
           tmp[,.(ind = sum(Denuncias), se = 0), .(desag = paste(Departamento,toupper(Sexo), sep = "_"))]) %>%
-          merge(censo_desag, by = "desag") %>%
+          merge(censo_desag, by = "desag", all.x = T) %>%
           transmute(desag, ind = ind*1000/pob, se)
         })()
 )
@@ -174,6 +174,31 @@ iccs_indicators <- drake_plan(
              ~I((opinion_cole)==4))
 )
 
+minsa_indicators <- drake_plan(
+  minsa_depresion =
+    (function(){
+      tmp <- as.data.table(minsa.depre)
+        rbind(
+          tmp[,.(desag = "NACIONAL", ind = sum(casos), se = 0)],
+          tmp[,.(ind = sum(casos), se = 0), .(desag = DEPARTAMENTO)],
+            tmp[,.(ind = sum(casos), se = 0), .(desag = paste(DEPARTAMENTO, PROVINCIA, DISTRITO, sep = "_"))]) %>%
+          merge(censo_desag2, by = "desag", all.x = T) %>%
+          transmute(desag, ind = ind*1000/pob, se)
+        })(),
+  minsa_defunciones =
+    (function(){
+      tmp <- as.data.table(minsa.defun %>% filter(EDAD <= 17))
+        rbind(
+          tmp[,.(desag = "NACIONAL", ind = sum(global), se = 0)],
+          tmp[,.(ind = sum(global), se = 0), .(desag = DEPARTAMENTO.RH)],
+          tmp[,.(ind = sum(global), se = 0), .(desag = SEXO)],
+          tmp[,.(ind = sum(global), se = 0), .(desag = paste(DEPARTAMENTO.RH, PROVINCIA.RH, DISTRITO.RH, sep = "_"))],
+          tmp[,.(ind = sum(global), se = 0), .(desag = paste(DEPARTAMENTO.RH, PROVINCIA.RH, DISTRITO.RH, SEXO, sep = "_"))]) %>%
+          merge(censo_desag, by = "desag", all.x = T) %>%
+          transmute(desag, ind = ind*1000/pob, se)
+        })()    
+)
+
 plan_indicators <- bind_plans(
   endes_indicators,
   enaho_indicators,
@@ -183,5 +208,6 @@ plan_indicators <- bind_plans(
   enut_indicators,
   pisa_indicators,
   pnp_indicators,
-  iccs_indicators
+  iccs_indicators,
+  minsa_indicators
 )

@@ -1,6 +1,6 @@
 plan_export1 <- drake_plan (
   output_prueba =
-    export_all(("output/indice_tablas.xlsx"),
+    export_all(file_out("output/indice_tablas.xlsx"),
                tabla_normalizada %>%
                  filter(stri_count_fixed(desag, "_") == 0 &
                           !(desag %in% c("HOMBRE", "MUJER"))) %>%
@@ -22,6 +22,27 @@ plan_export1 <- drake_plan (
                tabla_normalizada %>% filter(desag == "NACIONAL"),
                tabla_normalizada %>% filter(desag == "NACIONAL")),
   
+  output_nacional_2 =
+    export_all(("output/indice_IG2.xlsx"),
+               tabla_normalizada %>% filter(desag == "NACIONAL"),
+               tabla_normalizada %>%
+                 filter(desag == "NACIONAL" & !(nombre %in%
+                          c("% que aspira a educación superior",
+                            "% completamenta satisfecho con su vida",
+                            "% con conocimiento financiero suficiente",
+                            "% adolescentes en actividades recreacionales por un periodo específico",
+                            "% que confía mucho o plenamente en el gobierno nacional",
+                            "% que manifiesta que sus profesores los motivan con frecuencia a expresar sus opiniones")))),
+  
+  output_nacional_3 =
+    export_all(("output/indice_IG3.xlsx"),
+               tabla_normalizada %>% filter(desag == "NACIONAL"),
+               tabla_normalizada %>% filter(desag == "NACIONAL" & nombre %in%
+                                              c("Prevalencia de depresión",
+                                                "Tasa de mortalidad global",
+                                                "% con competencia satisfactoria en lectura",
+                                                "% con competencia satisfactoria en matemática"))),
+
   output_regional =
     export_all(("output/indice_IGR1.xlsx"),
                tabla_normalizada %>%
@@ -36,17 +57,16 @@ plan_export1 <- drake_plan (
                             "% que confía mucho o plenamente en el gobierno nacional",
                             "% que manifiesta que sus profesores los motivan con frecuencia a expresar sus opiniones")))),
   
-  output_nacional_2 =
-    export_all(("output/indice_IG2.xlsx"),
-               tabla_normalizada %>% filter(desag == "NACIONAL"),
+  output_regional_2 =
+    export_all(("output/indice_IGR2.xlsx"),
                tabla_normalizada %>%
-                 filter(desag == "NACIONAL" & !(nombre %in%
-                          c("% que aspira a educación superior",
-                            "% completamenta satisfecho con su vida",
-                            "% con conocimiento financiero suficiente",
-                            "% adolescentes en actividades recreacionales por un periodo específico",
-                            "% que confía mucho o plenamente en el gobierno nacional",
-                            "% que manifiesta que sus profesores los motivan con frecuencia a expresar sus opiniones")))),
+                 filter(stri_count_fixed(desag, "_") == 0 &
+                          !(desag %in% c("HOMBRE", "MUJER", "NACIONAL"))),
+               tabla_normalizada %>% filter(desag == "NACIONAL" & nombre %in%
+                                              c("Prevalencia de depresión",
+                                                "Tasa de mortalidad global",
+                                                "% con competencia satisfactoria en lectura",
+                                                "% con competencia satisfactoria en matemática"))),
   
   tabla_ubidist =
     tabla_normalizada %>%
@@ -65,7 +85,7 @@ plan_export1 <- drake_plan (
         mutate(regprov =
                  stri_split_fixed(desag, "_") %>%
                  sapply(function(x)paste(x[1], x[2], sep = "_"))) %>%
-        transmute(ubigeo = substr(ubigeo, 1, 4), regprov),
+        transmute(ubigeo = substr(ubigeo, 1, 4), regprov) %>% unique,
       by = "regprov") %>%
     transmute(desag =
                 stri_split_fixed(desag, "_") %>%
@@ -74,14 +94,14 @@ plan_export1 <- drake_plan (
                 substr(1, 30),
               dimension, nombre, ind, error, peor, mejor, norm, fuente),
   tabla_ranking =
-    (function(){
+    (function(x){
       sheets <-
-        xlsx::loadWorkbook("output/indice_tablas.xlsx") %>%
+        xlsx::loadWorkbook(x) %>%
         xlsx::getSheets() %>% names
   
       lapply(sheets,
              function(i){
-               read.xlsx("output/indice_tablas.xlsx",
+               read.xlsx(x,
                          sheetName = i,
                          rowIndex = 4:9,
                          colIndex = 11:12,
@@ -114,29 +134,32 @@ plan_export1 <- drake_plan (
         filter(dimension == "GLOBAL") %>%
         arrange(-valor) %>%
         select(-dimension)
-      )})(),
+      )})(file_in("output/indice_tablas.xlsx")),
   
   output_ranking =
     export_ranking("output/ranking.xlsx", tabla_ranking)
     
 )
 
-# plan_export2 <- tibble(
-#   target =
-#     sprintf("%02d",1:25) %>%
-#     (function(x){
-#       paste0("output/indice_ID1_",x)
-#     }),
-#   command =
-#     sprintf("%02d",1:25) %>%
-#     (function(x){
-#       paste0(
-# 'export_all(("output/indice_ID1_',x,'.xlsx"),
-# tabla_ubidist %>% filter(substr(desag,1,2) == ',x,'),
-# tabla_normalizada %>% filter(desag == "NACIONAL"))')
-#     })
-# )
+plan_export2 <- tibble(
+  target =
+    sprintf("%02d",1:25) %>%
+    (function(x){
+      paste0("output/indice_ID1_",x)
+    }),
+  command =
+    sprintf("%02d",1:25) %>%
+    (function(x){
+      paste0(
+'export_all(("output/ID/indice_ID1_',
+c(regiones[1:14], "LIMA", regiones[-(1:16)])[as.numeric(x)],
+'.xlsx"),
+tabla_ubidist %>% filter(substr(desag,1,2) == "',x,'"),
+tabla_normalizada %>% filter(desag == "NACIONAL" & nombre %in% c("Prevalencia de depresión", "Tasa de mortalidad global", "% con competencia satisfactoria en lectura", "% con competencia satisfactoria en matemática")),
+ubigeo2 %>% transmute(ubigeo = substr(ubigeo,1,4), depa, prov) %>% unique)')
+    })
+)
 
 plan_export <- bind_plans(
-  plan_export1#, plan_export2
+  plan_export1, plan_export2
 )
