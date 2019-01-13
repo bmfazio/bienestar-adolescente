@@ -2,86 +2,9 @@ censo_load <- drake_plan(
   censo =
     fread(
       file_in("DATADIR__/inei/censo/2017/censo_full.csv")),
-censo_desag = (function(ll, ul){
-  x <- censo[ll<=edad&edad<=ul]
-  x[x$region == "CALLAO",]$provincia <- "CALLAO"
-  x[x$distrito == "ANCO_HUALLO",]$distrito <- "ANCO HUALLO"
-  x[x$distrito == "RUPA-RUPA",]$distrito <- "RUPA RUPA"
-  x[x$distrito == "HUAY-HUAY",]$distrito <- "HUAY HUAY"
-  bind_rows(
-    # GLOBAL
-    x[,.(desag = "NACIONAL", pob = sum(poblacion))],
-    # GLOBAL-SEXUAL
-    x[,.(pob = sum(poblacion)),.(desag = sexo)],
-    # REGIONAL
-    x[region!="LIMA", .(pob = sum(poblacion)), .(desag = region)],
-    x[region=="LIMA"&provincia=="LIMA",
-      .(desag = "LIMA METROPOLITANA", pob = sum(poblacion))],
-    x[region=="LIMA"&provincia!="LIMA",
-      .(desag = "LIMA REGION", pob = sum(poblacion))],
-    # REGIONAL-SEXUAL
-    x[region!="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste(region, sexo, sep = "_"))],
-    x[region=="LIMA"&provincia=="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA METROPOLITANA", sexo, sep = "_"))],
-    x[region=="LIMA"&provincia!="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA REGION", sexo, sep = "_"))],
-    # DISTRITAL
-    x[region!="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste(region, provincia, distrito, sep = "_"))],
-    x[region=="LIMA"&provincia=="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA METROPOLITANA", provincia, distrito, sep = "_"))],
-    x[region=="LIMA"&provincia!="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA REGION", provincia, distrito, sep = "_"))],
-    # DISTRITAL-SEXUAL
-    x[region!="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste(region, provincia, distrito, sexo, sep = "_"))],
-    x[region=="LIMA"&provincia=="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA METROPOLITANA", provincia, distrito, sexo, sep = "_"))],
-    x[region=="LIMA"&provincia!="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA REGION", provincia, distrito, sexo, sep = "_"))]
-  )
-})(11, 17),
-censo_desag2 = (function(ll, ul){
-  x <- censo[ll<=edad&edad<=ul]
-  x[x$region == "CALLAO",]$provincia <- "CALLAO"
-  x[x$distrito == "ANCO_HUALLO",]$distrito <- "ANCO HUALLO"
-  x[x$distrito == "RUPA-RUPA",]$distrito <- "RUPA RUPA"
-  x[x$distrito == "HUAY-HUAY",]$distrito <- "HUAY HUAY"
-  bind_rows(
-    # GLOBAL
-    x[,.(desag = "NACIONAL", pob = sum(poblacion))],
-    # GLOBAL-SEXUAL
-    x[,.(pob = sum(poblacion)),.(desag = sexo)],
-    # REGIONAL
-    x[region!="LIMA", .(pob = sum(poblacion)), .(desag = region)],
-    x[region=="LIMA"&provincia=="LIMA",
-      .(desag = "LIMA METROPOLITANA", pob = sum(poblacion))],
-    x[region=="LIMA"&provincia!="LIMA",
-      .(desag = "LIMA REGION", pob = sum(poblacion))],
-    # REGIONAL-SEXUAL
-    x[region!="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste(region, sexo, sep = "_"))],
-    x[region=="LIMA"&provincia=="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA METROPOLITANA", sexo, sep = "_"))],
-    x[region=="LIMA"&provincia!="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA REGION", sexo, sep = "_"))],
-    # DISTRITAL
-    x[region!="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste(region, provincia, distrito, sep = "_"))],
-    x[region=="LIMA"&provincia=="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA METROPOLITANA", provincia, distrito, sep = "_"))],
-    x[region=="LIMA"&provincia!="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA REGION", provincia, distrito, sep = "_"))],
-    # DISTRITAL-SEXUAL
-    x[region!="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste(region, provincia, distrito, sexo, sep = "_"))],
-    x[region=="LIMA"&provincia=="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA METROPOLITANA", provincia, distrito, sexo, sep = "_"))],
-    x[region=="LIMA"&provincia!="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA REGION", provincia, distrito, sexo, sep = "_"))]
-  )
-})(12, 17)
+  censo_desag_11a17 = censo_edad(censo, 11, 17),
+  censo_desag_12a17 = censo_edad(censo, 12, 17),
+  censo_desag_18a24 = censo_edad(censo, 18, 24)
 ) %>%
   evaluate_plan(
     rules = list(DATADIR__ = datadir),

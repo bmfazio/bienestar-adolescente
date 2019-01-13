@@ -49,15 +49,25 @@ minsa_load <- drake_plan(
                                                   replacement = " ")
                          })
       
-      
       tmp[apply(tmp[,1:3], 2, function(x)stri_detect_fixed(x, "Total")) %>%
           apply(1, function(x) !as.logical(sum(x, na.rm = T))),] -> tmp
       
       tmp %>%
         fillNAs %>%
-        select_at(c(1:3,5)) -> tmp
+        select_at(c(1:3,14)) -> tmp_f
+      tmp %>%
+        fillNAs %>%
+        select_at(c(1:3,15)) -> tmp_m
       
-      colnames(tmp)[4] <- "casos"
+      colnames(tmp_f)[4] <- "casos"
+      colnames(tmp_m)[4] <- "casos"
+      
+      tmp_f %>% transmute(DEPARTAMENTO, PROVINCIA, DISTRITO,
+                          sexo = "MUJER", casos) -> tmp_f
+      tmp_m %>% transmute(DEPARTAMENTO, PROVINCIA, DISTRITO,
+                          sexo = "HOMBRE", casos) -> tmp_m
+      tmp <- bind_rows(tmp_f, tmp_m)
+      
       tmp[tmp$PROVINCIA == "LIMA",]$DEPARTAMENTO <- "LIMA METROPOLITANA"
       tmp[tmp$DEPARTAMENTO == "LIMA",]$DEPARTAMENTO <- "LIMA REGION"
       tmp[tmp$PROVINCIA == "ANTONIO RAIMONDI",]$PROVINCIA <- "ANTONIO RAYMONDI"

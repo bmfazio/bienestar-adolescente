@@ -10,6 +10,7 @@ source(file.path("R","prep_iccs.R"))
 source(file.path("R","prep_censo.R"))
 source(file.path("R","prep_ubigeo.R"))
 source(file.path("R","prep_minsa.R"))
+source(file.path("R","prep_jne.R"))
 
 plan_prep <- bind_plans(
   endes_load,
@@ -26,5 +27,6 @@ plan_prep <- bind_plans(
   iccs_load,
   censo_load,
   ubigeo_load,
-  minsa_load
+  minsa_load,
+  jne_load
 )

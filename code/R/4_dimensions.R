@@ -104,7 +104,10 @@ plan_dimensions <- drake_plan(
                  "ICCS 2016", highbad = F),
         opinion_cole %>%
           tabfun("% que manifiesta que sus profesores los motivan con frecuencia a expresar sus opiniones",
-                 "ICCS 2016", highbad = F)
+                 "ICCS 2016", highbad = F),
+        jovenes_votan %>%
+          tabfun("% de jovenes 18-24 habilitados para votar",
+                 "JNE 2017", highbad = F, scale = 1)
         ) %>% cbind(dimension = "PARTICIPACION")
     ) %>%
     mutate(desag =

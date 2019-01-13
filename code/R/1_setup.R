@@ -525,9 +525,52 @@ export_ranking <- function(outfile, tabrank){
   xlsx::saveWorkbook(wb, outfile)
 }
 
+# Propagar nombres de fila hacia abajo
 fillNAs <- function(dataf){
   for(i in 1:ncol(dataf)){
     dataf[,i] <- na.locf(dataf[,i])
   }
   dataf
+}
+
+# Seleccionar rango de edad para censo
+censo_edad <- function(x, ll, ul){
+  x <- x[ll<=edad&edad<=ul]
+  x[x$region == "CALLAO",]$provincia <- "CALLAO"
+  x[x$distrito == "ANCO_HUALLO",]$distrito <- "ANCO HUALLO"
+  x[x$distrito == "RUPA-RUPA",]$distrito <- "RUPA RUPA"
+  x[x$distrito == "HUAY-HUAY",]$distrito <- "HUAY HUAY"
+  bind_rows(
+    # GLOBAL
+    x[,.(desag = "NACIONAL", pob = sum(poblacion))],
+    # GLOBAL-SEXUAL
+    x[,.(pob = sum(poblacion)),.(desag = sexo)],
+    # REGIONAL
+    x[region!="LIMA", .(pob = sum(poblacion)), .(desag = region)],
+    x[region=="LIMA"&provincia=="LIMA",
+      .(desag = "LIMA METROPOLITANA", pob = sum(poblacion))],
+    x[region=="LIMA"&provincia!="LIMA",
+      .(desag = "LIMA REGION", pob = sum(poblacion))],
+    # REGIONAL-SEXUAL
+    x[region!="LIMA", .(pob = sum(poblacion)),
+      .(desag = paste(region, sexo, sep = "_"))],
+    x[region=="LIMA"&provincia=="LIMA", .(pob = sum(poblacion)),
+      .(desag = paste("LIMA METROPOLITANA", sexo, sep = "_"))],
+    x[region=="LIMA"&provincia!="LIMA", .(pob = sum(poblacion)),
+      .(desag = paste("LIMA REGION", sexo, sep = "_"))],
+    # DISTRITAL
+    x[region!="LIMA", .(pob = sum(poblacion)),
+      .(desag = paste(region, provincia, distrito, sep = "_"))],
+    x[region=="LIMA"&provincia=="LIMA", .(pob = sum(poblacion)),
+      .(desag = paste("LIMA METROPOLITANA", provincia, distrito, sep = "_"))],
+    x[region=="LIMA"&provincia!="LIMA", .(pob = sum(poblacion)),
+      .(desag = paste("LIMA REGION", provincia, distrito, sep = "_"))],
+    # DISTRITAL-SEXUAL
+    x[region!="LIMA", .(pob = sum(poblacion)),
+      .(desag = paste(region, provincia, distrito, sexo, sep = "_"))],
+    x[region=="LIMA"&provincia=="LIMA", .(pob = sum(poblacion)),
+      .(desag = paste("LIMA METROPOLITANA", provincia, distrito, sexo, sep = "_"))],
+    x[region=="LIMA"&provincia!="LIMA", .(pob = sum(poblacion)),
+      .(desag = paste("LIMA REGION", provincia, distrito, sexo, sep = "_"))]
+  )
 }

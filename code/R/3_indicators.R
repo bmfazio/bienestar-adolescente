@@ -158,7 +158,7 @@ pnp_indicators <- drake_plan(
           tmp[,.(ind = sum(Denuncias), se = 0), .(desag = Departamento)],
           tmp[,.(ind = sum(Denuncias), se = 0), .(desag = toupper(Sexo))],
           tmp[,.(ind = sum(Denuncias), se = 0), .(desag = paste(Departamento,toupper(Sexo), sep = "_"))]) %>%
-          merge(censo_desag, by = "desag", all.x = T) %>%
+          merge(censo_desag_11a17, by = "desag", all.x = T) %>%
           transmute(desag, ind = ind*1000/pob, se)
         })()
 )
@@ -181,8 +181,11 @@ minsa_indicators <- drake_plan(
         rbind(
           tmp[,.(desag = "NACIONAL", ind = sum(casos), se = 0)],
           tmp[,.(ind = sum(casos), se = 0), .(desag = DEPARTAMENTO)],
-            tmp[,.(ind = sum(casos), se = 0), .(desag = paste(DEPARTAMENTO, PROVINCIA, DISTRITO, sep = "_"))]) %>%
-          merge(censo_desag2, by = "desag", all.x = T) %>%
+          tmp[,.(ind = sum(casos), se = 0), .(desag = sexo)],
+          tmp[,.(ind = sum(casos), se = 0), .(desag = paste(DEPARTAMENTO, sexo, sep = "_"))],
+          tmp[,.(ind = sum(casos), se = 0), .(desag = paste(DEPARTAMENTO, PROVINCIA, DISTRITO, sep = "_"))],
+tmp[,.(ind = sum(casos), se = 0), .(desag = paste(DEPARTAMENTO, PROVINCIA, DISTRITO, sexo, sep = "_"))]) %>%
+          merge(censo_desag_12a17, by = "desag", all.x = T) %>%
           transmute(desag, ind = ind*1000/pob, se)
         })(),
   minsa_defunciones =
@@ -194,9 +197,18 @@ minsa_indicators <- drake_plan(
           tmp[,.(ind = sum(global), se = 0), .(desag = SEXO)],
           tmp[,.(ind = sum(global), se = 0), .(desag = paste(DEPARTAMENTO.RH, PROVINCIA.RH, DISTRITO.RH, sep = "_"))],
           tmp[,.(ind = sum(global), se = 0), .(desag = paste(DEPARTAMENTO.RH, PROVINCIA.RH, DISTRITO.RH, SEXO, sep = "_"))]) %>%
-          merge(censo_desag, by = "desag", all.x = T) %>%
+          merge(censo_desag_11a17, by = "desag", all.x = T) %>%
           transmute(desag, ind = ind*1000/pob, se)
         })()    
+)
+
+jne_indicators <- drake_plan(
+  jovenes_votan = rbind(
+    jne[,.(desag = "NACIONAL", ind = sum(casos), se = 0)],
+    jne[,.(ind = sum(casos), se = 0), .(desag = DEPARTAMENTO)],
+    jne[,.(ind = sum(casos), se = 0), .(desag = paste(DEPARTAMENTO, PROVINCIA, DISTRITO, sep = "_"))]) %>%
+    merge(censo_desag_18a24, by = "desag", all.x = T) %>%
+    transmute(desag, ind = ind/pob, se)
 )
 
 plan_indicators <- bind_plans(
@@ -209,5 +221,6 @@ plan_indicators <- bind_plans(
   pisa_indicators,
   pnp_indicators,
   iccs_indicators,
-  minsa_indicators
+  minsa_indicators,
+  jne_indicators
 )
