@@ -137,8 +137,46 @@ plan_export1 <- drake_plan (
       )})(file_in("output/indice_tablas.xlsx")),
   
   output_ranking =
-    export_ranking("output/ranking.xlsx", tabla_ranking)
+    export_ranking("output/ranking.xlsx", tabla_ranking),
+  
+  output_sexo =
+    export_all(file_out("output/indice_NacionalSexo.xlsx"),
+               rbind(
+                 tabla_normalizada %>%
+                   filter(desag == "HOMBRE" & nombre != "Violencia sexual ejercida por otra persona que no es su pareja"),
+                 tabla_normalizada %>%
+                   filter(desag == "MUJER" | (desag == "NACIONAL" & nombre %in% c("Tasa de natalidad adolescente", "Menores de edad unidas"))) %>% mutate(desag = "MUJER")),
+               tabla_normalizada %>% filter(desag == "NACIONAL" & !(nombre %in% c("Prevalencia de desnutrición o sobrepeso", "Prevalencia de anemia", "Proporción de adolescentes que usó condón en último encuentro sexual","Proporción de adolescentes sexualmente activos con método moderno","% adolescentes que han experimentado violencia por parte de su pareja","% adolescentes involucrados en trabajo infantil (c/tiempo hogar)")))),
+  output_sexo2 =
+    export_all(file_out("output/indice_RegionalSexo.xlsx"),
+               tabla_normalizada %>% 
+                 filter(sapply(desag,function(x)
+                   stri_count_fixed(x, "_")) == 0) %>%
+                 select(desag) %>% unlist %>%
+                 setdiff(c("NACIONAL", "HOMBRE", "MUJER")) %>%
+                 lapply(function(x){
+                   tabla_normalizada %>%
+                     filter(desag == x |
+                              (stri_count_fixed(desag, "_") == 1 &
+                                 stri_detect_regex(desag, paste0("^",x)))) -> global
     
+                   rbind(
+                     global %>%
+                       filter(stri_detect_fixed(desag, "HOMBRE") &
+                                nombre != "Violencia sexual ejercida por otra persona que no es su pareja") %>%
+                       mutate(desag = "HOMBRE"),
+                     global %>%
+                       filter(stri_detect_fixed(desag, "MUJER") |
+                                nombre %in% c("Tasa de natalidad adolescente", "Menores de edad unidas")) %>%
+                       mutate(desag = "MUJER")
+                     ) %>% mutate(desag = paste0(x, "_", desag))
+                   }) %>%
+                 bind_rows(
+                   tabla_normalizada %>%
+                     filter(desag == "HOMBRE" & nombre != "Violencia sexual ejercida por otra persona que no es su pareja"),
+                   tabla_normalizada %>%
+                     filter(desag == "MUJER" | (desag == "NACIONAL" & nombre %in% c("Tasa de natalidad adolescente", "Menores de edad unidas"))) %>% mutate(desag = "MUJER")),
+               tabla_normalizada %>% filter(desag == "NACIONAL" & !(nombre %in% c("Prevalencia de desnutrición o sobrepeso", "Prevalencia de anemia", "Proporción de adolescentes que usó condón en último encuentro sexual","Proporción de adolescentes sexualmente activos con método moderno","% adolescentes que han experimentado violencia por parte de su pareja","% adolescentes involucrados en trabajo infantil (c/tiempo hogar)", "% que aspira a educación superior", "% completamenta satisfecho con su vida", "% con conocimiento financiero suficiente","% adolescentes en actividades recreacionales por un periodo específico","% que confía mucho o plenamente en el gobierno nacional","% que manifiesta que sus profesores los motivan con frecuencia a expresar sus opiniones"))))
 )
 
 plan_export2 <- tibble(

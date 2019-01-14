@@ -92,19 +92,19 @@ ece_indicators <- drake_plan(
 enares_indicators <- drake_plan(
   violencia_cualquier =
     enares_ready %>%
-    svy_prop(~region,
+    svy_prop(~region+sexo,
              ~I((casa.v.emo+casa.v.fis+cole.v.emo+cole.v.fis)>0)),
   violencia_no.bulli =
     enares_ready %>%
-    svy_prop(~region,
+    svy_prop(~region+sexo,
              ~I((casa.v.emo+casa.v.fis)>0)),
   violencia_bullying =
     enares_ready %>%
-    svy_prop(~region,
+    svy_prop(~region+sexo,
              ~I((cole.v.emo+cole.v.fis)>0)),
   violencia_sexual =
      enares_ready %>%
-    svy_prop(~region, ~v.sex)
+    svy_prop(~region+sexo, ~v.sex)
 )
 
 eti_indicators <- drake_plan(

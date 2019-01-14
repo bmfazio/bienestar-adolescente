@@ -17,3 +17,5 @@ make(plan)
 #vis_drake_graph(drake_config(plan))
 
 # ARREGLAR empalmes con censo (nombres desag)
+
+# loadd(tabla_normalizada)

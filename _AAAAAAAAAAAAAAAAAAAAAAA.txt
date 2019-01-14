@@ -1,16 +1,3 @@
-DS 072-2012-PCM
-Ley de Protección de Datos Personales, Ley 29733
-
-Para hacer seguimiento al Entregable 5, lo que necesito es lo siguiente (para el 31 de diciembre o antes):
-1. El cálculo del índice global con todas las variables que se puedan (IG1)
-2. El cálculo del índice regional con todas las variables que se puedan (IGR 1)
-3. El cálculo del índice distrital con todas las variables que se puedan (IGD 1)
-4. El cálculo del índice global con las variables consideradas para el IGR 1 (IG2)
-5. El cálculo del índice global con las variables consideradas para el IGD 1(IG3)
-6. El cálculo del índice regional con las variables consideradas para el IGD 1 (IGR 2)
-
-Por favor, sé claro con las variables que incluyes en cada índice a fin de describir bien lo que encontramos.
-
 Para Febrero, calcularemos lo siguiente:
 1. El cálculo de todos los índices anteriores por sexo y urbano-rural
 2. El cálculo del índice de desigualdad de genero para todos los casos anteriores
