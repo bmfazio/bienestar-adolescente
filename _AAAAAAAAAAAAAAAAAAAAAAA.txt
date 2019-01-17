@@ -4,3 +4,10 @@ Para Febrero, calcularemos lo siguiente:
 3. Las recomendaciones para conseguir más y mejores datos.
 
 Cualquier cosa me comentas. No te olvides de incluir todas las bases que faltan (quizá las que tengas sólo hasta el 14 de diciembre para poner un deadline).
+
+
+---
+Creo que las formulas de Pablo no estan bien
+	- Falta sacar inversa en ARM
+	- Los indicadores de porcentaje en el calculo de las Gs deben ir en decimal sin invertir
+	- Las productorias deberian tener su propia raiz?

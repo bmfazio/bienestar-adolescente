@@ -143,9 +143,11 @@ plan_export1 <- drake_plan (
     export_all(file_out("output/indice_NacionalSexo.xlsx"),
                rbind(
                  tabla_normalizada %>%
-                   filter(desag == "HOMBRE" & nombre != "Violencia sexual ejercida por otra persona que no es su pareja"),
+                   filter(desag == "HOMBRE" & nombre != "Violencia sexual ejercida por otra persona que no es su pareja") %>%
+                   mutate(desag = "NACIONAL 1_HOMBRE"),
                  tabla_normalizada %>%
-                   filter(desag == "MUJER" | (desag == "NACIONAL" & nombre %in% c("Tasa de natalidad adolescente", "Menores de edad unidas"))) %>% mutate(desag = "MUJER")),
+                   filter(desag == "MUJER" | (desag == "NACIONAL" & nombre %in% c("Tasa de natalidad adolescente", "Menores de edad unidas"))) %>%
+                   mutate(desag = "NACIONAL 1_MUJER")),
                tabla_normalizada %>% filter(desag == "NACIONAL" & !(nombre %in% c("Prevalencia de desnutrición o sobrepeso", "Prevalencia de anemia", "Proporción de adolescentes que usó condón en último encuentro sexual","Proporción de adolescentes sexualmente activos con método moderno","% adolescentes que han experimentado violencia por parte de su pareja","% adolescentes involucrados en trabajo infantil (c/tiempo hogar)")))),
   output_sexo2 =
     export_all(file_out("output/indice_RegionalSexo.xlsx"),
@@ -176,10 +178,10 @@ plan_export1 <- drake_plan (
                  bind_rows(
                    tabla_normalizada %>%
                      filter(desag == "HOMBRE" & nombre != "Violencia sexual ejercida por otra persona que no es su pareja") %>%
-                     mutate(desag = "NACIONAL_HOMBRE"),
+                     mutate(desag = "NACIONAL 2_HOMBRE"),
                    tabla_normalizada %>%
                      filter(desag == "MUJER" | (desag == "NACIONAL" & nombre %in% c("Tasa de natalidad adolescente", "Menores de edad unidas"))) %>%
-                     mutate(desag = "NACIONAL_MUJER")),
+                     mutate(desag = "NACIONAL 2_MUJER")),
                tabla_normalizada %>% filter(desag == "NACIONAL" & !(nombre %in% c("Prevalencia de desnutrición o sobrepeso", "Prevalencia de anemia", "Proporción de adolescentes que usó condón en último encuentro sexual","Proporción de adolescentes sexualmente activos con método moderno","% adolescentes que han experimentado violencia por parte de su pareja","% adolescentes involucrados en trabajo infantil (c/tiempo hogar)", "% que aspira a educación superior", "% completamenta satisfecho con su vida", "% con conocimiento financiero suficiente","% adolescentes en actividades recreacionales por un periodo específico","% que confía mucho o plenamente en el gobierno nacional","% que manifiesta que sus profesores los motivan con frecuencia a expresar sus opiniones"))))
 )
 

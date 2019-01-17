@@ -574,3 +574,98 @@ censo_edad <- function(x, ll, ul){
       .(desag = paste("LIMA REGION", provincia, distrito, sexo, sep = "_"))]
   )
 }
+
+# Desigualdad de genero
+IDG_xls <- function(sourcexl){
+  sheets <- xlsx::loadWorkbook(sourcexl) %>% xlsx::getSheets() %>% names
+  
+  lapply(sheets,
+       function(i){
+         read.xlsx(sourcexl,
+                   sheetName = i,
+                   rowIndex = 4:9,
+                   colIndex = 11:12,
+                   header = FALSE) %>%
+           cbind(desag = i, .) %>%
+           transmute(desag, dimension = X11, valor = X12)}) %>%
+    do.call(rbind, .) -> tabindex
+  
+  lapply(sheets,
+         function(i){
+           read.xlsx(sourcexl,
+                     sheetName = i,
+                     rowIndex = 4:27,
+                     colIndex = c(2:4),
+                     header = FALSE) %>%
+             cbind(desag = i, .)}) %>%
+    do.call(rbind, .) %>%
+    filter(stri_detect_fixed(desag, "MUJER")) %>%
+    transmute(desag, nombre = X3, valor = X4) -> tabindic
+  
+  (allindic %>%
+      pull(desag) %>% 
+      stri_split_fixed("_") %>%
+      unlist %>%
+      matrix(nrow=2))[1, ] %>%
+    unique -> desagiter
+  
+  desagiter %>%
+    lapply(function(x) list(tabindex %>%
+                              filter(stri_detect_regex(desag,
+                                                       paste0("^", x))),
+                            tabindic %>%
+                              filter(stri_detect_regex(desag,
+                                                       paste0("^", x))))) %>%
+    lapply(function(x) IDG_row(x[[1]], x[[2]])) %>%
+    bind_rows
+}
+
+IDG_row <- function(allindex, allindic){
+  allindic %>%
+    filter(stri_detect_fixed(nombre, "Tasa de natalidad")) %>%
+    pull(valor) %>% max(0.1) -> FE
+  allindic %>%
+    filter(stri_detect_fixed(nombre, "Violencia sexual")) %>%
+    pull(valor) %>% max(0.1)  -> VS
+  allindic %>%
+    filter(stri_detect_fixed(nombre, "edad unidas")) %>%
+    pull(valor) %>% max(0.1)  -> MU
+  
+  data.frame(
+    GM =
+      ((
+        allindex %>%
+          filter(stri_detect_fixed(desag, "MUJER") & dimension != "GLOBAL") %>%
+          select(valor) %>% unlist %>% prod
+      ) *
+        sqrt((1/68)*1/FE)*sqrt(1/VS)*sqrt(1/MU)
+      ) %>%
+      `^`(1 / 7),
+    GH =
+      allindex %>%
+      filter(stri_detect_fixed(desag,"HOMBRE") & dimension != "GLOBAL") %>%
+      select(valor) %>% unlist %>% prod %>%
+      `^`(1 / 7)
+  ) %>%
+    mutate(
+      ARM = 0.5 * (1 / GM + 1 / GH),
+      bSALUD =
+        (allindex %>% filter(dimension == "SALUD") %>%
+           pull(valor) %>% mean) + (sqrt(1 / FE) + 1) / 2,
+      bEDUCA =
+        allindex %>% filter(dimension == "EDUCACION") %>%
+        pull(valor) %>% mean,
+      bSEGUR = (
+        allindex %>% filter(dimension == "SEGURIDAD") %>%
+          pull(valor) %>% mean
+      ) + (sqrt(1 / VS + 1 / MU) + 1) / 2,
+      bTRABA =
+        allindex %>% filter(dimension == "TRABAJO") %>%
+        pull(valor) %>% mean,
+      bPARTI =
+        allindex %>% filter(dimension == "PARTICIPACION") %>%
+        pull(valor) %>% mean
+    ) %>%
+    mutate(bGMH = (bSALUD * bEDUCA * bSEGUR * bTRABA * bPARTI) ** (1 / 5)) %>%
+    mutate(IDG = 1 - ARM / bGMH)
+}
