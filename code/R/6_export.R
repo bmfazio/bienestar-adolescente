@@ -1,4 +1,9 @@
 plan_export1 <- drake_plan (
+  output_nacional_0 =
+    export_all(("output/Global_0.xlsx"),
+               tabla_normalizada %>% filter(desag == "NACIONAL"),
+               tabla_normalizada %>% filter(desag == "NACIONAL")),
+  
   output_prueba =
     export_all(file_out("output/indice_tablas.xlsx"),
                tabla_normalizada %>%
@@ -17,13 +22,9 @@ plan_export1 <- drake_plan (
                      mutate(desag = "NACIONAL 2")
                  ),
                tabla_normalizada %>% filter(desag == "NACIONAL")),
-  output_nacional =
-    export_all(("output/indice_IG1.xlsx"),
-               tabla_normalizada %>% filter(desag == "NACIONAL"),
-               tabla_normalizada %>% filter(desag == "NACIONAL")),
   
-  output_nacional_2 =
-    export_all(("output/indice_IG2.xlsx"),
+  output_nacional_1 =
+    export_all(("output/Global_1.xlsx"),
                tabla_normalizada %>% filter(desag == "NACIONAL"),
                tabla_normalizada %>%
                  filter(desag == "NACIONAL" & !(nombre %in%
@@ -34,7 +35,57 @@ plan_export1 <- drake_plan (
                             "% que confía mucho o plenamente en el gobierno nacional",
                             "% que manifiesta que sus profesores los motivan con frecuencia a expresar sus opiniones")))),
   
+  output_nacional_2 =
+    export_all(("output/Global_2.xlsx"),
+               tabla_normalizada %>% filter(desag == "NACIONAL"),
+               tabla_normalizada %>%
+                 filter(desag == "NACIONAL" & (nombre %in%
+                          c("Tasa de natalidad adolescente",
+                            "Prevalencia de consumo reciente de alcohol o tabaco",
+                            "Prevalencia de depresión",
+                            "Tasa de mortalidad global",
+                            "Tasa de finalización de educación primaria",
+                            "Tasa de finalización de educación secundaria",
+                            "Tasa de adolescentes fuera del sistema educativo",
+                            "Tasa de matrícula bruta en educación superior",
+                            "% con competencia satisfactoria en lectura",
+                            "% con competencia satisfactoria en matemática",
+                            "Menores de edad unidas",
+                            "% adolescentes que han experimentado violencia (no bullying)",
+                            "% adolescentes que reportaron ser víctimas de bullying",
+                            "Violencia sexual ejercida por otra persona que no es su pareja",
+                            "Proporción de adolescentes entre 15-19 en pobreza monetaria",
+                            "Denuncias por violencia doméstica x 1000 habitantes",
+                            "% adolescentes involucrados en trabajo infantil (c/tiempo hogar)",
+                            "% adolescentes sin educación, empleo o formación (nini)",
+                            "% adolescentes que usaron Internet en el último mes")))),
+  
   output_nacional_3 =
+    export_all(("output/Global_3.xlsx"),
+               tabla_normalizada %>% filter(desag == "NACIONAL"),
+               tabla_normalizada %>%
+                 filter(desag == "NACIONAL" & (nombre %in%
+                          c("Tasa de natalidad adolescente",
+                            "Prevalencia de consumo reciente de alcohol o tabaco",
+                            "Prevalencia de depresión",
+                            "Tasa de mortalidad global",
+                            "Tasa de finalización de educación primaria",
+                            "Tasa de finalización de educación secundaria",
+                            "Tasa de adolescentes fuera del sistema educativo",
+                            "Tasa de matrícula bruta en educación superior",
+                            "% con competencia satisfactoria en lectura",
+                            "% con competencia satisfactoria en matemática",
+                            "Menores de edad unidas",
+                            "% adolescentes que han experimentado violencia (no bullying)",
+                            "% adolescentes que reportaron ser víctimas de bullying",
+                            "Violencia sexual ejercida por otra persona que no es supareja",
+                            "Proporción de adolescentes entre 15-19 en pobreza monetaria",
+                            "Denuncias por violencia doméstica x 1000 habitantes",
+                            "% adolescentes involucrados en trabajo infantil (c/tiempo hogar)",
+                            "% adolescentes sin educación, empleo o formación (nini)",
+                            "% adolescentes que usaron Internet en el último mes")))),
+  
+  output_nacional_distritos =
     export_all(("output/indice_IG3.xlsx"),
                tabla_normalizada %>% filter(desag == "NACIONAL"),
                tabla_normalizada %>% filter(desag == "NACIONAL" & nombre %in%

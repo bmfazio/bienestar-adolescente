@@ -76,7 +76,7 @@ plan_dimensions <- drake_plan(
                  "PNP 2017", scale = 1)
         ) %>% cbind(dimension = "SEGURIDAD"),
       rbind(
-        tinfantil_full %>%
+        trabajo_infantil_enaho %>%
           tabfun("% adolescentes involucrados en trabajo infantil (c/tiempo hogar)",
                  "ENAHO 2017"),
         porcentaje_nini %>%

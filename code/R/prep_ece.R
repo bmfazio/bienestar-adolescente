@@ -42,7 +42,8 @@ rbind(
         paste(Region26 %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>% toupper,
           Provincia %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>% toupper,
           Distrito %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>% toupper,
-          sexo, sep = "_"))])
+          sexo,
+          Area %>% toupper, sep = "_"))])
 ) %>%
   evaluate_plan(
     rules = list(MINEDUDIR__ = minedudir),
