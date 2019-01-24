@@ -2,8 +2,16 @@ ece_load <- drake_plan(
   ece =
     fread(
       file_in("MINEDUDIR__/ece/ECE_2016_2S_alumnos.csv")) %>%
-    mutate(sexo = toupper(sexo)) %>%
-    mutate(Distrito = ifelse(Distrito == "ANCO_HUALLO", "ANCO HUALLO", Distrito)) %>%
+    mutate(
+      sexo = toupper(sexo),
+      Distrito =
+        ifelse(Distrito == "ANCO_HUALLO",
+               "ANCO HUALLO", Distrito),
+      Region26 =
+        case_when(
+          Region26 == "LIMA" & Provincia == "LIMA" ~ "LIMA METROPOLITANA",
+          Region26 == "LIMA" & Provincia != "LIMA" ~ "LIMA REGION",
+          TRUE ~ Region26)) %>%
     as.data.table,
   ece_ready =
 rbind(

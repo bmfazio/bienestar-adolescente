@@ -120,6 +120,9 @@ svy_mean <- function(svyobj, desag, formulind){
 }
 
 svy_prop <- function(svyobj, desag, formulind){
+  
+  svyobj <- svyobj %>% subset(!is.na(eval(formulind[[2]])))
+  
   desag[[2]] %>%
   as.character %>%
   stri_replace_all(replacement = " ", fixed = "+") %>%

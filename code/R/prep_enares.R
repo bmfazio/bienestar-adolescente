@@ -6,9 +6,10 @@ enares_load <- drake_plan(
   enares_ready =
     enares200[,.(
       region = DIREED %>% decode_direed,
-      psu = as.numeric(factor(COD_MOD)),
+      psu1 = as.numeric(factor(COD_MOD)),
+      psu2 = as.numeric(factor(paste(COD_MOD, C3ANIO, TURNO, C3SECC))),
       peso = Factor_Alumnos,
-      estrato = putlabel(AREA),
+      area = toupper(putlabel(AREA)),
       sexo = ifelse(SEXO == 1, "MUJER", "HOMBRE"),
       edad = EDAD,
       casa.v.emo =as.numeric(
@@ -35,8 +36,7 @@ enares_load <- drake_plan(
                C4P248_6,C4P248_7,C4P248_8,C4P248_9,C4P248_10,
                C4P248_11,C4P248_12)>0)
           )] %>%
-  svydesign(ids =~ psu,
-            strata =~ estrato,
+  svydesign(ids =~ psu1+psu2,
             weights =~ peso,
             data = .)
 ) %>%

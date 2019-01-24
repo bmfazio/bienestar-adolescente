@@ -3,79 +3,79 @@ endes_indicators <- drake_plan(
   tasa_natalidad =
     endes_mujer %>%
     subset(gedad == "15-19") %>%
-    svy_mean(~ region, ~ nhijos),
+    svy_mean(~ region+area, ~ nhijos),
   prevalencia_mala.nutricion =
     endes_mujer %>%
     subset(gedad == "15-19") %>%
-    svy_prop(~ region, ~ I(imc<1850|2500<imc)),
+    svy_prop(~ region+area, ~ I(imc<1850|2500<imc)),
   prevalencia_anemia =
     endes_mujer %>%
     subset(gedad == "15-19") %>%
-    svy_prop(~ region, ~ anemia),
+    svy_prop(~ region+area, ~ anemia),
   prevalencia_condon =
     endes_mujer %>%
     subset(gedad == "15-19" & inisex > 0) %>%
-    svy_prop(~ region, ~ultsex.condon),
+    svy_prop(~ region+area, ~ultsex.condon),
   prevalencia_metodo.moderno =
     endes_mujer %>%
     subset(gedad == "15-19" & inisex > 0) %>%
-    svy_prop(~ region,  ~antic.moderno),
+    svy_prop(~ region+area,  ~antic.moderno),
   matrimonio_infantil =
     endes_mujer %>%
     subset(gedad == "20-24") %>%
-    svy_prop(~ region, ~I(edad.matri < 18)),
+    svy_prop(~ region+area, ~I(edad.matri < 18)),
   mujer_violentada =
     endes_mujer %>%
     subset(gedad == "15-19") %>%
-    svy_prop(~ region, ~I(v.emoc==1|v.sex==1|v.fisi==1|v.fisigrav==1)),
+    svy_prop(~ region+area, ~I(v.emoc==1|v.sex==1|v.fisi==1|v.fisigrav==1)),
   # ENDES SALUD
   prevalencia_tab.alc30d =
     endes_salud %>%
     subset(15<=edad&edad<=19) %>%
-    svy_prop(~ region+sexo, ~(tabaco.30d+alc.30d) > 0)
+    svy_prop(~ region+sexo+area, ~(tabaco.30d+alc.30d) > 0)
 )
 
 enaho_indicators <- drake_plan(
   finalizacion_primaria =
     enaho_ready %>%
     subset(12<=edad&edad<=13) %>%
-    svy_prop(~region+sexo, ~I(educ.aprobado >= 4 & educ.aprobado != 12)),
+    svy_prop(~region+sexo+area, ~I(educ.aprobado >= 4 & educ.aprobado != 12)),
   finalizacion_secundaria =
     enaho_ready %>%
     subset(17<=edad&edad<=18) %>%
-    svy_prop(~region+sexo, ~I(educ.aprobado >= 6 & educ.aprobado != 12)),
+    svy_prop(~region+sexo+area, ~I(educ.aprobado >= 6 & educ.aprobado != 12)),
   out_of_school =
     enaho_ready %>%
     subset(12<=edad&edad<=17) %>%
-    svy_prop(~region+sexo, ~!estudia.actual),
+    svy_prop(~region+sexo+area, ~!estudia.actual),
   matricula_superior =
   enaho_ready %>%
     subset(18<=edad&edad<=22) %>%
-    svy_prop(~region+sexo,
+    svy_prop(~region+sexo+area,
              ~I((educ.aprobado %in% c(8,10,11))|(educ.esteanho %in% 4:6))),
   pobreza_monetaria =
     enaho_ready %>%
     subset(15<=edad&edad<=19) %>%
-    svy_prop(~region+sexo, ~I(pobreza < 3)),
+    svy_prop(~region+sexo+area, ~I(pobreza < 3)),
   trabajo_infantil_enaho =
     enaho_ready %>%
     subset(12<=edad&edad<=17) %>%
-    svy_prop(~region+sexo, ~I(
+    svy_prop(~region+sexo+area, ~I(
       (12<=edad&edad<=13 & ((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=24))|
         (14<=edad&edad<=17 & ((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=36))
       )),
   desempleo_adolescente =
     enaho_ready %>%
     subset(15<=edad&edad<=19&((trab500.buscando&!trab500)|trab500)) %>%
-    svy_prop(~region+sexo, ~I(!trab500)),
+    svy_prop(~region+sexo+area, ~I(!trab500)),
   porcentaje_nini =
     enaho_ready %>%
     subset(15<=edad&edad<=19) %>%
-    svy_prop(~region+sexo, ~I(!estudia.actual&!trab500&!trab500.buscando)),
+    svy_prop(~region+sexo+area, ~I(!estudia.actual&!trab500&!trab500.buscando)),
   uso_internet =
     enaho_ready %>%
     subset(12<=edad&edad<=17) %>%
-    svy_prop(~region+sexo, ~internet.ultmes)
+    svy_prop(~region+sexo+area, ~internet.ultmes)
 )
 
 ece_indicators <- drake_plan(
@@ -92,19 +92,19 @@ ece_indicators <- drake_plan(
 enares_indicators <- drake_plan(
   violencia_cualquier =
     enares_ready %>%
-    svy_prop(~region+sexo,
+    svy_prop(~region+sexo+area,
              ~I((casa.v.emo+casa.v.fis+cole.v.emo+cole.v.fis)>0)),
   violencia_no.bulli =
     enares_ready %>%
-    svy_prop(~region+sexo,
+    svy_prop(~region+sexo+area,
              ~I((casa.v.emo+casa.v.fis)>0)),
   violencia_bullying =
     enares_ready %>%
-    svy_prop(~region+sexo,
+    svy_prop(~region+sexo+area,
              ~I((cole.v.emo+cole.v.fis)>0)),
   violencia_sexual =
      enares_ready %>%
-    svy_prop(~region+sexo, ~v.sex)
+    svy_prop(~region+sexo+area, ~v.sex)
 )
 
 eti_indicators <- drake_plan(
@@ -132,15 +132,15 @@ enut_indicators <- drake_plan(
   participacion_sindicato =
     enut_ready %>%
     subset(12<=edad&edad<=17) %>%
-    svy_prop(~sexo, ~sindicato),
+    svy_prop(~sexo+area, ~sindicato),
   tiempo_recreativo =
     enut_ready %>%
     subset(12<=edad&edad<=17) %>%
-    svy_prop(~sexo, ~I(tiempo.libre >= 22)),
+    svy_prop(~sexo+area, ~I(tiempo.libre >= 22)),
   voluntariado =
     enut_ready %>%
     subset(12<=edad&edad<=17) %>%
-    svy_prop(~sexo, ~voluntario)
+    svy_prop(~sexo+area, ~voluntario)
 )
 
 pisa_indicators <- drake_plan(

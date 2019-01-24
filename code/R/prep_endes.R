@@ -75,6 +75,7 @@ endes_merge <- drake_plan(
       region = putlabel(SHREGION),
       estrato.region = putlabel(V023),
       estrato.urbrur = V022,
+      area = case_when(V025 == 1 ~ "URBANO", V025 == 2 ~ "RURAL"),
       gedad = putlabel(V013),
       inisex = V525,
       nhijos = V209,
@@ -111,6 +112,7 @@ endes_merge <- drake_plan(
       psuid = HV021,
       peso = PESO15_AMAS/10**6,
       region = putlabel(SHREGION),
+      area = case_when(HV025 == 1 ~ "URBANO", HV025 == 2 ~ "RURAL"),
       estrato.region = putlabel(HV023),
       estrato.urbrur = HV022,
       sexo = putlabel(QSSEXO),
@@ -150,7 +152,8 @@ endes_merge <- drake_plan(
       )]%>%
     mutate(
       region = case_when(
-        estrato.region == "Lima" & region == "Lima metropolitana" ~ region,
+        estrato.region == "Lima" & region == "Lima metropolitana" ~ "LIMA METROPOLITANA",
+        estrato.region == "Lima" & region != "Lima metropolitana" ~ "LIMA REGION",
         TRUE ~ estrato.region
         )
       ) %>%

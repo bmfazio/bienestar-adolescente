@@ -46,6 +46,7 @@ enaho_merge <- drake_plan(
       region.css = DOMINIO,
       psu = CONGLOME,
       stratum = ESTRATO,
+      area = ifelse(ESTRATO %in% 7:8, "RURAL", "URBANO"),
       weight = FACPOB07,
       edad = P208A,
       sexo = putlabel(P207) %>% toupper,

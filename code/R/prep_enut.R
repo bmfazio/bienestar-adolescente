@@ -19,6 +19,7 @@ enut_merge <- drake_plan(
     enut200[,.(
       id,
       sexo=putlabel(P204),
+      area=toupper(putlabel(AREA)),
       edad=P205
       )] %>%
     merge(enut500[,.(
