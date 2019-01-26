@@ -1,4 +1,7 @@
 plan_export1 <- drake_plan (
+  
+  
+  
   output_nacional_0 =
     export_all(("output/Global_0.xlsx"),
                tabla_normalizada %>% filter(desag == "NACIONAL"),

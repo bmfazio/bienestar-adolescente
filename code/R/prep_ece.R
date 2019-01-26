@@ -26,6 +26,10 @@ rbind(
   ece[!(is.na(aj_c)|is.na(aj_m)),
       .(read = 100*sum(ifelse(grupo_L == "Satisfactorio", aj_c, 0))/sum(aj_c),
         math = 100*sum(ifelse(grupo_M == "Satisfactorio", aj_m, 0))/sum(aj_m)),
+      .(desag = Area %>% toupper)],
+  ece[!(is.na(aj_c)|is.na(aj_m)),
+      .(read = 100*sum(ifelse(grupo_L == "Satisfactorio", aj_c, 0))/sum(aj_c),
+        math = 100*sum(ifelse(grupo_M == "Satisfactorio", aj_m, 0))/sum(aj_m)),
       .(desag =
           Region26 %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>%
           toupper)],
@@ -35,6 +39,12 @@ rbind(
       .(desag = 
           paste(Region26 %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>%
         toupper, sexo, sep = "_"))],
+  ece[!(is.na(aj_c)|is.na(aj_m)),
+      .(read = 100*sum(ifelse(grupo_L == "Satisfactorio", aj_c, 0))/sum(aj_c),
+        math = 100*sum(ifelse(grupo_M == "Satisfactorio", aj_m, 0))/sum(aj_m)),
+      .(desag = 
+          paste(Region26 %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>%
+        toupper, Area %>% toupper, sep = "_"))],
   ece[!(is.na(aj_c)|is.na(aj_m)),
       .(read = 100*sum(ifelse(grupo_L == "Satisfactorio", aj_c, 0))/sum(aj_c),
         math = 100*sum(ifelse(grupo_M == "Satisfactorio", aj_m, 0))/sum(aj_m)),
@@ -50,8 +60,24 @@ rbind(
         paste(Region26 %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>% toupper,
           Provincia %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>% toupper,
           Distrito %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>% toupper,
-          sexo,
-          Area %>% toupper, sep = "_"))])
+          sexo, sep = "_"))],
+  ece[!(is.na(aj_c)|is.na(aj_m)),
+      .(read = 100*sum(ifelse(grupo_L == "Satisfactorio", aj_c, 0))/sum(aj_c),
+        math = 100*sum(ifelse(grupo_M == "Satisfactorio", aj_m, 0))/sum(aj_m)),
+      .(desag =
+          paste(Region26 %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>% toupper,
+          Provincia %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>% toupper,
+          Distrito %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>% toupper,
+          Area %>% toupper, sep = "_"))],
+  ece[!(is.na(aj_c)|is.na(aj_m)),
+      .(read = 100*sum(ifelse(grupo_L == "Satisfactorio", aj_c, 0))/sum(aj_c),
+        math = 100*sum(ifelse(grupo_M == "Satisfactorio", aj_m, 0))/sum(aj_m)),
+      .(desag =
+        paste(Region26 %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>% toupper,
+          Provincia %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>% toupper,
+          Distrito %>% iconv(from = "latin1", to = "ASCII//TRANSLIT") %>% toupper,
+          sexo, Area %>% toupper,
+          sep = "_"))])
 ) %>%
   evaluate_plan(
     rules = list(MINEDUDIR__ = minedudir),

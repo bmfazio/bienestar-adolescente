@@ -24,8 +24,34 @@ if(length(datadir) == 1 & any(dir.exists(datadir))){
   stop("data dir not found")
 }
 
+geomean <- function(...){
+  tmpfun <- function(...){
+    x <- unlist(list(...))
+    x <- x[!is.na(x)]
+    x <- ifelse(x == 0, 0.01, x)
+    exp(mean(log(x)))
+  }
+  mapply(tmpfun, ...)
+}
+
+indic2index <- function(x){
+  x %>%
+    group_by(region, provincia, distrito,
+             area, sexo, dimension) %>%
+    summarise(indice = mean(norm)) %>%
+    bind_rows(
+        mutate(., dimension = "GLOBAL") %>%
+        group_by(region, provincia, distrito,
+                 area, sexo, dimension) %>%
+        summarise(indice =
+                    exp(mean(log(
+                      ifelse(indice == 0, 0.01, indice))))
+                  ))
+}
+
 # LABELS
 hm_ <- c("HOMBRE", "MUJER")
+ur_ <- c("URBANA", "RURAL")
 
 # Apply labels to categorical vars imported
 # from other data formats

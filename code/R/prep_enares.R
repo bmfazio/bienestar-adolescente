@@ -5,7 +5,10 @@ enares_load <- drake_plan(
       setclass = "data.table"),
   enares_ready =
     enares200[,.(
-      region = DIREED %>% decode_direed,
+      region =
+        DIREED %>%
+        decode_direed %>%
+        ifelse(. == "LIMA PROVINCIAS", "LIMA REGION", .),
       psu1 = as.numeric(factor(COD_MOD)),
       psu2 = as.numeric(factor(paste(COD_MOD, C3ANIO, TURNO, C3SECC))),
       peso = Factor_Alumnos,

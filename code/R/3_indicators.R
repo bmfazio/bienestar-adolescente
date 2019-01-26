@@ -202,15 +202,6 @@ tmp[,.(ind = sum(casos), se = 0), .(desag = paste(DEPARTAMENTO, PROVINCIA, DISTR
         })()    
 )
 
-jne_indicators <- drake_plan(
-  jovenes_votan = rbind(
-    jne[,.(desag = "NACIONAL", ind = sum(casos), se = 0)],
-    jne[,.(ind = sum(casos), se = 0), .(desag = DEPARTAMENTO)],
-    jne[,.(ind = sum(casos), se = 0), .(desag = paste(DEPARTAMENTO, PROVINCIA, DISTRITO, sep = "_"))]) %>%
-    merge(censo_desag_18a24, by = "desag", all.x = T) %>%
-    transmute(desag, ind = ind/pob, se)
-)
-
 plan_indicators <- bind_plans(
   endes_indicators,
   enaho_indicators,
@@ -221,6 +212,5 @@ plan_indicators <- bind_plans(
   pisa_indicators,
   pnp_indicators,
   iccs_indicators,
-  minsa_indicators,
-  jne_indicators
+  minsa_indicators
 )

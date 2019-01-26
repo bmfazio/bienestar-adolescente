@@ -69,7 +69,7 @@ plan_dimensions <- drake_plan(
           tabfun("Proporción de adolescentes entre 15-19 en pobreza monetaria",
                  "ENAHO 2017"),
         vida_satisfac %>%
-          tabfun("% completamenta satisfecho con su vida",
+          tabfun("% completamente satisfecho con su vida",
                  "PISA 2015", scale = 1, highbad = F),
         pnp_denuncias %>%
           tabfun("Denuncias por violencia doméstica x 1000 habitantes",
