@@ -28,7 +28,8 @@ nice_plan <- drake_plan(
                   desag2 %in% c(hm_) ~ desag2,
                   desag4 %in% c(hm_) ~ desag4,
                   TRUE ~ "TOTAL"),
-              dimension, nombre, ind, error, peor, mejor, norm, fuente),
+              dimension, nombre, ind, error, peor, mejor, norm, fuente) %>%
+    avg_dims(area) %>% avg_dims(sexo),
 
   ind_nacional =
     nice_table %>%
@@ -197,7 +198,7 @@ nicest_plan <- drake_plan(
                sexo != "TOTAL") %>%
         select(region, sexo, GLOBAL) %>%
         spread(sexo, GLOBAL) %>%
-    select(region, Hombre = HOMBRE, Mujer = MUJER),
+    select(region, Hombre = HOMBRE, Mujer = MUJER, MediaHM = MEDIA),
     by = "region") %>%
     left_join(
       nicest_table %>%
@@ -205,7 +206,7 @@ nicest_plan <- drake_plan(
                area != "TOTAL") %>%
         select(region, area, GLOBAL) %>%
         spread(area, GLOBAL) %>%
-    select(region, Urbano = URBANA, Rural = RURAL),
+    select(region, Urbano = URBANA, Rural = RURAL, MediaUR = MEDIA),
     by = "region") %>%
     bind_rows(
       nicest_table %>%
@@ -217,7 +218,7 @@ nicest_plan <- drake_plan(
                    sexo != "TOTAL") %>%
             select(region, sexo, GLOBAL) %>%
             spread(sexo, GLOBAL) %>%
-            select(region, Hombre = HOMBRE, Mujer = MUJER),
+            select(region, Hombre = HOMBRE, Mujer = MUJER, MediaHM = MEDIA),
           by = "region") %>%
         left_join(
           nicest_table %>%
@@ -225,17 +226,28 @@ nicest_plan <- drake_plan(
                    area != "TOTAL") %>%
             select(region, area, GLOBAL) %>%
             spread(area, GLOBAL) %>%
-            select(region, Urbano = URBANA, Rural = RURAL),
-          by = "region")        
-    )
+            select(region, Urbano = URBANA, Rural = RURAL, MediaUR = MEDIA),
+          by = "region")
+    ) %>%
+    transmute(REGION = region, Global,
+              Hombre, Mujer,
+              DisparidadHM =
+                1 - harmean(Hombre, Mujer)/MediaHM,
+              Urbano, Rural,
+              DisparidadUR =
+                1 - harmean(Urbano, Rural)/MediaUR)
+)
+
+allind_plan <- gather_plan(
+  plan = nice_plan,
+  target = "allind_table",
+  gather = "allind_func"
 )
 
 plan_wrangle <- bind_plans(
   nice_plan,
   nicify_plan,
-  nicer_plan
+  nicer_plan,
+  nicest_plan,
+  allind_plan
 )
-
-# presentar una tabla con los indicadores para cada desagregacion:
-# lista completa de indicadores en una columna ('nombre')
-# columnas adicionales indicando cada desagregacion y cuales indicadores retiene

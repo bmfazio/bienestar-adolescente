@@ -10,6 +10,7 @@ library(readxl)
 library(ggplot2)
 library(survey)
 library(stringi)
+library(writexl)
 library(data.table)
 
 options(stringsAsFactors = FALSE)
@@ -24,15 +25,7 @@ if(length(datadir) == 1 & any(dir.exists(datadir))){
   stop("data dir not found")
 }
 
-geomean <- function(...){
-  tmpfun <- function(...){
-    x <- unlist(list(...))
-    x <- x[!is.na(x)]
-    x <- ifelse(x == 0, 0.01, x)
-    exp(mean(log(x)))
-  }
-  mapply(tmpfun, ...)
-}
+harmean <- function(x, y)2/(x**-1 + y**-1)
 
 indic2index <- function(x){
   x %>%
@@ -45,8 +38,58 @@ indic2index <- function(x){
                  area, sexo, dimension) %>%
         summarise(indice =
                     exp(mean(log(
-                      ifelse(indice == 0, 0.01, indice))))
+                      ifelse(indice < 0.01, 0.01, indice))))
                   ))
+}
+
+add_mujer <- function(x){
+  x %>%
+    mutate(desag =
+             case_when(
+               stri_count_fixed(desag, "_") == 0 &
+                 !(desag %in% c("URBANA", "RURAL")) ~
+                 paste0(desag, "_MUJER"),
+               stri_detect_fixed(desag, "URBANA") ~
+                 stri_replace_all_fixed(desag, "URBANA", "MUJER_URBANA"),
+               stri_detect_fixed(desag, "RURAL") ~
+                 stri_replace_all_fixed(desag, "RURAL", "MUJER_RURAL")
+               )) %>% bind_rows(x, .)
+}
+
+avg_dims <- function(x, y) {
+  y <- enquo(y)
+  n <- (x %>% pull(!!y) %>% unique %>% length) - 1
+  x %>%
+    filter(!!y != "TOTAL") %>%
+    mutate(!!quo_name(y) := "MEDIA") %>%
+    group_by(region, provincia, distrito, area, sexo,
+             dimension, nombre, peor, mejor, fuente) %>%
+    summarise(norm = sum(norm, n - length(norm))/n) %>%
+    ungroup %>%
+    bind_rows(x, .)
+}
+
+allind_func <- function(...) {
+  list(...)[-1] %>%
+    lapply(function(x){
+      x %>%
+        select(dimension, nombre) %>%
+        unique
+    }) -> inds
+  indtypes <- names(inds)
+  for(i in indtypes) {
+    inds[[i]] %>%
+      mutate(tipoind = 1) -> inds[[i]]
+  }
+  inds %>%
+    reduce(left_join,
+           by = c("nombre", "dimension")) -> inds
+  names(inds)[stri_detect_fixed(names(inds),"tipoind")] <- indtypes
+  inds %>%
+    mutate_all(funs(case_when(
+      is.na(.) ~ "",
+      . == 1 ~ "X",
+      TRUE ~ as.character(.))))
 }
 
 # LABELS

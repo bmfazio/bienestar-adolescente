@@ -3,7 +3,7 @@ endes_indicators <- drake_plan(
   tasa_natalidad =
     endes_mujer %>%
     subset(gedad == "15-19") %>%
-    svy_mean(~ region+area, ~ nhijos),
+    svy_mean(~ region+area, ~ nhijos) %>% add_mujer,
   prevalencia_mala.nutricion =
     endes_mujer %>%
     subset(gedad == "15-19") %>%
@@ -23,7 +23,7 @@ endes_indicators <- drake_plan(
   matrimonio_infantil =
     endes_mujer %>%
     subset(gedad == "20-24") %>%
-    svy_prop(~ region+area, ~I(edad.matri < 18)),
+    svy_prop(~ region+area, ~I(edad.matri < 18)) %>% add_mujer,
   mujer_violentada =
     endes_mujer %>%
     subset(gedad == "15-19") %>%
