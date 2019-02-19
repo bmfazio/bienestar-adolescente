@@ -4,6 +4,7 @@ library(yaml)
 library(xlsx)
 library(dplyr)
 library(drake)
+library(purrr)
 library(tidyr)
 library(intsvy)
 library(readxl)
@@ -86,7 +87,7 @@ allind_func <- function(...) {
            by = c("nombre", "dimension")) -> inds
   names(inds)[stri_detect_fixed(names(inds),"tipoind")] <- indtypes
   inds %>%
-    mutate_all(funs(case_when(
+    mutate_all(list(~case_when(
       is.na(.) ~ "",
       . == 1 ~ "X",
       TRUE ~ as.character(.))))

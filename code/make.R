@@ -15,19 +15,3 @@ plan <- bind_plans(
 )
 
 make(plan)
-
-#vis_drake_graph(drake_config(plan))
-
-loadd(nice_table)
-loadd(nicest_table)
-loadd(summary_table)
-loadd(allind_table)
-
-write_xlsx(allind_table,
-           "output/CoberturaIndicadores.xlsx")
-write_xlsx(summary_table,
-           "output/ResumenIndices.xlsx")
-write_xlsx(nicest_table,
-           "output/DetalleIndices.xlsx")
-write_xlsx(nice_table,
-           "output/DetalleIndicadores.xlsx")
