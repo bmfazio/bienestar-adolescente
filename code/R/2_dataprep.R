@@ -5,7 +5,7 @@ source(file.path("R","prep_enut.R"))
 source(file.path("R","prep_eti.R"))
 source(file.path("R","prep_ece.R"))
 source(file.path("R","prep_pisa.R"))
-source(file.path("R","prep_pnp.R"))
+source(file.path("R","prep_cem.R"))
 source(file.path("R","prep_iccs.R"))
 source(file.path("R","prep_censo.R"))
 source(file.path("R","prep_ubigeo.R"))
@@ -23,7 +23,7 @@ plan_prep <- bind_plans(
   eti_load,
   ece_load,
   pisa_plan,
-  pnp_load,
+  cem_load,
   iccs_load,
   censo_load,
   ubigeo_load,
