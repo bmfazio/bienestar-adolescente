@@ -57,17 +57,15 @@ add_mujer <- function(x){
                )) %>% bind_rows(x, .)
 }
 
-avg_dims <- function(x, y) {
+avg_dims1 <- function(x, y) {
   y <- enquo(y)
-  n <- (x %>% pull(!!y) %>% unique %>% length) - 1
+  n <- (x %>% pull(!!y) %>% unique %>% setdiff(c("TOTAL", "MEDIA")) %>% length)
   x %>%
-    filter(!!y != "TOTAL") %>%
+    filter(!!y != "TOTAL" & !!y != "MEDIA" ) %>%
     mutate(!!quo_name(y) := "MEDIA") %>%
     group_by(region, provincia, distrito, area, sexo,
              dimension, nombre, peor, mejor, fuente) %>%
-    summarise(norm = sum(norm, n - length(norm))/n) %>%
-    ungroup %>%
-    bind_rows(x, .)
+    summarise(norm = sum(norm, n - length(norm))/n)
 }
 
 allind_func <- function(...) {
