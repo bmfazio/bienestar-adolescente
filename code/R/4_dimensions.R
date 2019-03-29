@@ -65,15 +65,15 @@ plan_dimensions <- drake_plan(
         violencia_sexual %>%
           tabfun("Violencia sexual ejercida por otra persona que no es su pareja",
                  "ENARES 2015"),
-        pobreza_monetaria %>%
-          tabfun("Proporción de adolescentes entre 15-19 en pobreza monetaria",
-                 "ENAHO 2017"),
+        # pobreza_monetaria %>%
+        #   tabfun("Proporción de adolescentes entre 15-19 en pobreza monetaria",
+        #          "ENAHO 2017"),
         vida_satisfac %>%
           tabfun("% completamente satisfecho con su vida",
                  "PISA 2015", scale = 1, highbad = F),
-        pnp_denuncias %>%
+        cem_denuncias %>%
           tabfun("Denuncias por violencia doméstica x 1000 habitantes",
-                 "PNP 2017", scale = 1)
+                 "CEM 2017", scale = 1)
         ) %>% cbind(dimension = "SEGURIDAD"),
       rbind(
         trabajo_infantil_enaho %>%

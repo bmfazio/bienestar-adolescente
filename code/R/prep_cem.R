@@ -46,7 +46,7 @@ cem_load <- drake_plan(
                  PORNOGRAFIA,
                  OTRA_VSEX))  %>%
     #adolescentes
-    filter(12<=EDAD_VICTIMA&EDAD_VICTIMA<=19) %>%
+    filter(12<=EDAD_VICTIMA&EDAD_VICTIMA<=19 & DPTO_DOMICILIO != "99") %>%
     #que han experimentado violencia psicologica/fisica/sexual
     filter(any(v_psi, v_fis, v_sex)) %>%
     mutate(
@@ -69,8 +69,20 @@ cem_load <- drake_plan(
       area = AREA_RESIDENCIA_DOMICILIO,
       sex = SEXO_VICTIMA,
       v_pareja, bullying, no_bullying, v_sexnp, domestica
+    ) %>%
+    mutate(
+      region = regiones[as.numeric(region)],
+      area =
+        case_when(
+          area == "U" ~ "URBANA",
+          area == "U" ~ "RURAL"
+          ),
+      sex =
+        case_when(
+          sex == 0 ~ "MUJER",
+          sex == 1 ~ "HOMBRE"
+        )
     )
-  
 ) %>%
   evaluate_plan(
     rules = list(DATADIR__ = datadir),

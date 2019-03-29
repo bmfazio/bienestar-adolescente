@@ -149,17 +149,18 @@ pisa_indicators <- drake_plan(
   vida_satisfac = pisa_sat(pisa.satisf)
 )
 
-pnp_indicators <- drake_plan(
-  pnp_denuncias =
+cem_indicators <- drake_plan(
+  cem_denuncias =
     (function(){
-      tmp <- as.data.table(pnp.violencia)[Edad == 11]
-        rbind(
-          tmp[,.(desag = "NACIONAL", ind = sum(Denuncias), se = 0)],
-          tmp[,.(ind = sum(Denuncias), se = 0), .(desag = Departamento)],
-          tmp[,.(ind = sum(Denuncias), se = 0), .(desag = toupper(Sexo))],
-          tmp[,.(ind = sum(Denuncias), se = 0), .(desag = paste(Departamento,toupper(Sexo), sep = "_"))]) %>%
-          merge(censo_desag_11a17, by = "desag", all.x = T) %>%
-          transmute(desag, ind = ind*1000/pob, se)
+      tmp <- as.data.table(cem17)
+      rbind(
+        tmp[,.(desag = "NACIONAL", ind = sum(domestica, na.rm = T), se = 0)],
+        tmp[,.(ind = sum(domestica, na.rm = T), se = 0), .(desag = region)],
+        tmp[,.(ind = sum(domestica, na.rm = T), se = 0), .(desag = sex)],
+        tmp[,.(ind = sum(domestica, na.rm = T), se = 0), .(desag = paste(region, sex, sep = "_"))]
+      ) %>%
+        merge(censo_desag_12a17, by = "desag", all.x = T) %>%
+        transmute(desag, ind = ind*1000/pob, se)
         })()
 )
 
@@ -210,7 +211,7 @@ plan_indicators <- bind_plans(
   eti_indicators,
   enut_indicators,
   pisa_indicators,
-  pnp_indicators,
+  cem_indicators,
   iccs_indicators,
   minsa_indicators
 )
