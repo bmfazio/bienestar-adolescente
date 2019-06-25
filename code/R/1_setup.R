@@ -57,7 +57,7 @@ add_mujer <- function(x){
                )) %>% bind_rows(x, .)
 }
 
-avg_dims1 <- function(x, y) {
+avg_dims <- function(x, y) {
   y <- enquo(y)
   n <- (x %>% pull(!!y) %>% unique %>% setdiff(c("TOTAL", "MEDIA")) %>% length)
   x %>%
@@ -65,7 +65,9 @@ avg_dims1 <- function(x, y) {
     mutate(!!quo_name(y) := "MEDIA") %>%
     group_by(region, provincia, distrito, area, sexo,
              dimension, nombre, peor, mejor, fuente) %>%
-    summarise(norm = sum(norm, n - length(norm))/n)
+    summarise(norm = sum(norm, n - length(norm))/n) %>%
+    ungroup %>%
+    bind_rows(x, .)
 }
 
 allind_func <- function(...) {
@@ -135,6 +137,12 @@ body(svyciprop)[[6]] <- substitute(names(rval) <- paste(deparse(formula[[2]]),co
   y <- ifelse(is.na(y),0,y)
   x+y
 }
+
+# Easy paste
+`%p0%` <- function(x, y) {
+  paste0(x,y)
+}
+
 
 # Normalize indicators
 normind <- function(x, max, min) {
@@ -285,6 +293,19 @@ xlsx.addTitle <- function(sheet, rowI, title, titleStyle, colI = 1){
 }
 source("R/modules/export_all.R")
 
+# ENDES
+rech0_import <- function(path){
+  import(path, setclass = "data.table") %>%
+    setNames(., toupper(colnames(.))) %>%
+    select(HHID, HV021, HV022, HV023, HV025)
+}
+rec0111_import <- function(path){
+  import(path, setclass = "data.table") %>%
+    setNames(., toupper(colnames(.))) %>%
+    transmute(HHID = substr(CASEID, 1, 15), CASEID, V005, V013, V021, V022, V023, V025)
+}
+
+
 # PISA
 flt_conf <-
   (function(){
@@ -343,10 +364,13 @@ decode_direed <- function(x) {
                       "1100", "1200", "1300", "1400", "1501",
                       "1502", "1600", "1700", "1800", "1900",
                       "2000", "2100", "2200", "2300", "2400", "2500"),
+                   # Modificar nomenclatura original:
+                   # LIMA METROPOLITANA -> LIMA PROVINCIA
+                   # LIMA PROVINCIAS -> LIMA REGION
            nombre = c("AMAZONAS",  "ANCASH", "APURÍMAC", "AREQUIPA", "AYACUCHO",
                       "CAJAMARCA", "CALLAO",  "CUSCO", "HUANCAVELICA", "HUÁNUCO",
                       "ICA", "JUNÍN", "LA LIBERTAD",  "LAMBAYEQUE",
-                      "LIMA METROPOLITANA", "LIMA PROVINCIAS", "LORETO",
+                      "LIMA PROVINCIA", "LIMA REGION", "LORETO",
                       "MADRE DE DIOS", "MOQUEGUA", "PASCO", "PIURA", "PUNO",
                       "SAN MARTÍN", "TACNA", "TUMBES", "UCAYALI"))
   dd[sapply(x, function(y)which(y==dd$codigo))]$nombre
@@ -354,7 +378,7 @@ decode_direed <- function(x) {
 
 c("AMAZONAS", "ANCASH", "APURIMAC", "AREQUIPA", "AYACUCHO", "CAJAMARCA", 
 "CALLAO", "CUSCO", "HUANCAVELICA", "HUANUCO", "ICA", "JUNIN", 
-"LA LIBERTAD", "LAMBAYEQUE", "LIMA REGION", "LIMA METROPOLITANA", 
+"LA LIBERTAD", "LAMBAYEQUE", "LIMA REGION", "LIMA PROVINCIA", 
 "LORETO", "MADRE DE DIOS", "MOQUEGUA", "PASCO", "PIURA", "PUNO", 
 "SAN MARTIN", "TACNA", "TUMBES", "UCAYALI") -> regiones
 
@@ -455,28 +479,28 @@ censo_edad <- function(x, ll, ul){
     # REGIONAL
     x[region!="LIMA", .(pob = sum(poblacion)), .(desag = region)],
     x[region=="LIMA"&provincia=="LIMA",
-      .(desag = "LIMA METROPOLITANA", pob = sum(poblacion))],
+      .(desag = "LIMA PROVINCIA", pob = sum(poblacion))],
     x[region=="LIMA"&provincia!="LIMA",
       .(desag = "LIMA REGION", pob = sum(poblacion))],
     # REGIONAL-SEXUAL
     x[region!="LIMA", .(pob = sum(poblacion)),
       .(desag = paste(region, sexo, sep = "_"))],
     x[region=="LIMA"&provincia=="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA METROPOLITANA", sexo, sep = "_"))],
+      .(desag = paste("LIMA PROVINCIA", sexo, sep = "_"))],
     x[region=="LIMA"&provincia!="LIMA", .(pob = sum(poblacion)),
       .(desag = paste("LIMA REGION", sexo, sep = "_"))],
     # DISTRITAL
     x[region!="LIMA", .(pob = sum(poblacion)),
       .(desag = paste(region, provincia, distrito, sep = "_"))],
     x[region=="LIMA"&provincia=="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA METROPOLITANA", provincia, distrito, sep = "_"))],
+      .(desag = paste("LIMA PROVINCIA", provincia, distrito, sep = "_"))],
     x[region=="LIMA"&provincia!="LIMA", .(pob = sum(poblacion)),
       .(desag = paste("LIMA REGION", provincia, distrito, sep = "_"))],
     # DISTRITAL-SEXUAL
     x[region!="LIMA", .(pob = sum(poblacion)),
       .(desag = paste(region, provincia, distrito, sexo, sep = "_"))],
     x[region=="LIMA"&provincia=="LIMA", .(pob = sum(poblacion)),
-      .(desag = paste("LIMA METROPOLITANA", provincia, distrito, sexo, sep = "_"))],
+      .(desag = paste("LIMA PROVINCIA", provincia, distrito, sexo, sep = "_"))],
     x[region=="LIMA"&provincia!="LIMA", .(pob = sum(poblacion)),
       .(desag = paste("LIMA REGION", provincia, distrito, sexo, sep = "_"))]
   )

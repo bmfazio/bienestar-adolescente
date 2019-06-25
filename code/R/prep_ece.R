@@ -9,9 +9,11 @@ ece_load <- drake_plan(
                "ANCO HUALLO", Distrito),
       Region26 =
         case_when(
-          Region26 == "LIMA" & Provincia == "LIMA" ~ "LIMA METROPOLITANA",
+          Region26 == "LIMA METROPOLITANA" ~ "LIMA PROVINCIA",
+          Region26 == "LIMA" & Provincia == "LIMA" ~ "LIMA PROVINCIA",
           Region26 == "LIMA" & Provincia != "LIMA" ~ "LIMA REGION",
           TRUE ~ Region26)) %>%
+    mutate(Area = case_when(Region26 == "LIMA PROVINCIA" ~ "Urbana", TRUE ~ Area)) %>%
     as.data.table,
   ece_ready =
 rbind(

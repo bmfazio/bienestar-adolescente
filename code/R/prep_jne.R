@@ -15,7 +15,7 @@ jne_load <- drake_plan(
       tmp <- as.data.table(tmp[-nrow(tmp),])
       names(tmp)[4] <- "casos"
       
-      tmp[tmp$PROVINCIA == "LIMA",]$DEPARTAMENTO <- "LIMA METROPOLITANA"
+      tmp[tmp$PROVINCIA == "LIMA",]$DEPARTAMENTO <- "LIMA PROVINCIA"
       tmp[tmp$DEPARTAMENTO == "LIMA",]$DEPARTAMENTO <- "LIMA REGION"
       tmp[tmp$PROVINCIA == "ANTONIO RAIMONDI",]$PROVINCIA <- "ANTONIO RAYMONDI"
       tmp[tmp$PROVINCIA == "NAZCA",]$PROVINCIA <- "NASCA"
@@ -35,9 +35,5 @@ jne_load <- drake_plan(
       tmp[tmp$DISTRITO == "RAIMONDI",]$DISTRITO <- "RAYMONDI"
       tmp[tmp$DISTRITO == "CORONEL GREGORIO ALBARRACIN L.",]$DISTRITO <- "CORONEL GREGORIO ALBARRACIN LANCHIPA"
       tmp
-    })(file_in("DATADIR__/jne/ADX-2019-000418-2.xls"))
-) %>%
-  evaluate_plan(
-    rules = list(DATADIR__ = datadir),
-    expand = FALSE
+    })(file_in("D:/datasets/jne/ADX-2019-000418-2.xls"))
 )

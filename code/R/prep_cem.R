@@ -66,12 +66,18 @@ cem_load <- drake_plan(
     ) %>%
     transmute(
       region = DPTO_DOMICILIO,
+      prov = PROV_DOMICILIO,
       area = AREA_RESIDENCIA_DOMICILIO,
       sex = SEXO_VICTIMA,
       v_pareja, bullying, no_bullying, v_sexnp, domestica
     ) %>%
     mutate(
-      region = regiones[as.numeric(region)],
+      region =
+        case_when(
+          as.numeric(region) <= 14 ~ regiones[as.numeric(region)],
+          region == "15" & prov == "01" ~ regiones[16],
+          region == "15" & prov != "01" ~ regiones[15],
+          as.numeric(region) > 15 ~ regiones[as.numeric(region)+1]),
       area =
         case_when(
           area == "U" ~ "URBANA",

@@ -1,4 +1,5 @@
 options(encoding = "utf8")
+
 source(file.path("R","1_setup.R"))
 source(file.path("R","2_dataprep.R"))
 source(file.path("R","3_indicators.R"))

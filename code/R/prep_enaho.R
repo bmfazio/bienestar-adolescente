@@ -100,7 +100,7 @@ enaho_merge <- drake_plan(
       by="hh", all.x = TRUE) %>%
     mutate(
       region = case_when(
-        region.25 == "15" & region.css == 8 ~ "LIMA METROPOLITANA",
+        region.25 == "15" & region.css == 8 ~ "LIMA PROVINCIA",
         TRUE ~ region.25 %>% ubigeator
         )
       ) %>%

@@ -61,8 +61,8 @@ enaho_indicators <- drake_plan(
     enaho_ready %>%
     subset(12<=edad&edad<=17) %>%
     svy_prop(~region+sexo+area, ~I(
-      (12<=edad&edad<=13 & ((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=24))|
-        (14<=edad&edad<=17 & ((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=36))
+      (12<=edad&edad<=14 & ((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=24))|
+        (15<=edad&edad<=17 & ((trab500.tiempo%+rmna%ifelse(trab200,trab200.tiempo,0))>=36))
       )),
   desempleo_adolescente =
     enaho_ready %>%
@@ -136,7 +136,7 @@ enut_indicators <- drake_plan(
   tiempo_recreativo =
     enut_ready %>%
     subset(12<=edad&edad<=17) %>%
-    svy_prop(~sexo+area, ~I(tiempo.libre >= 22)),
+    svy_prop(~sexo+area, ~I(tiempo.libre >= 24)),
   voluntariado =
     enut_ready %>%
     subset(12<=edad&edad<=17) %>%
@@ -191,14 +191,14 @@ tmp[,.(ind = sum(casos), se = 0), .(desag = paste(DEPARTAMENTO, PROVINCIA, DISTR
         })(),
   minsa_defunciones =
     (function(){
-      tmp <- as.data.table(minsa.defun %>% filter(EDAD <= 17))
+      tmp <- as.data.table(minsa.defun %>% filter(12<=EDAD&EDAD<=17))
         rbind(
           tmp[,.(desag = "NACIONAL", ind = sum(global), se = 0)],
           tmp[,.(ind = sum(global), se = 0), .(desag = DEPARTAMENTO.RH)],
           tmp[,.(ind = sum(global), se = 0), .(desag = SEXO)],
           tmp[,.(ind = sum(global), se = 0), .(desag = paste(DEPARTAMENTO.RH, PROVINCIA.RH, DISTRITO.RH, sep = "_"))],
           tmp[,.(ind = sum(global), se = 0), .(desag = paste(DEPARTAMENTO.RH, PROVINCIA.RH, DISTRITO.RH, SEXO, sep = "_"))]) %>%
-          merge(censo_desag_11a17, by = "desag", all.x = T) %>%
+          merge(censo_desag_12a17, by = "desag", all.x = T) %>%
           transmute(desag, ind = ind*1000/pob, se)
         })()    
 )

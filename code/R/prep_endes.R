@@ -43,11 +43,6 @@ endes_load <- drake_plan(
     import(
       file_in("INEIDIR__/endes/2017/Modulo70/REC42.SAV"),
       setclass = "data.table"),
-  # Mortalidad materna
-  # rec83 =
-  #   import(
-  #     file_in("INEIDIR__/endes/2017/Modulo73/REC83.SAV"),
-  #     setclass = "data.table"),
   # Violencia domestica
   rec84dv =
     import(
@@ -63,7 +58,7 @@ endes_merge <- drake_plan(
   # Cuestionarios exclusivos para mujer
   endes_mujer = (
     rec0111 %>%
-      merge(rech23, by.x = "hhid", by.y = "HHID") %>%
+      merge(rech23, by = "HHID") %>% # why no all.x = T?
       merge(re223132, by = "CASEID", all.x = T) %>%
       merge(re516171, by = "CASEID", all.x = T) %>%
       merge(re758081, by = "CASEID", all.x = T) %>%
@@ -95,7 +90,7 @@ endes_merge <- drake_plan(
       )] %>%
     mutate(
       region = case_when(
-        estrato.region == "Lima" & region == "Lima metropolitana" ~ "LIMA METROPOLITANA",
+        estrato.region == "Lima" & region == "Lima metropolitana" ~ "LIMA PROVINCIA",
         estrato.region == "Lima" & region != "Lima metropolitana" ~ "LIMA REGION",
         TRUE ~ estrato.region
         )
@@ -153,7 +148,7 @@ endes_merge <- drake_plan(
       )]%>%
     mutate(
       region = case_when(
-        estrato.region == "Lima" & region == "Lima metropolitana" ~ "LIMA METROPOLITANA",
+        estrato.region == "Lima" & region == "Lima metropolitana" ~ "LIMA PROVINCIA",
         estrato.region == "Lima" & region != "Lima metropolitana" ~ "LIMA REGION",
         TRUE ~ estrato.region
         )

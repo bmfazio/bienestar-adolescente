@@ -1,15 +1,10 @@
 minsa_load <- drake_plan(
   minsa.defun =
     (function(x){
-      read.xlsx(x,
-               sheetIndex = 1) -> tmp
-      tmp[,2:4] <- apply(tmp[,2:4], 2,
-                          iconv, from = "utf8", to = "ASCII//TRANSLIT")
-      tmp[,2:4] <- apply(tmp[,2:4], 2,
-                         function(x){
-                           stri_replace_all_regex(x, "[-_]",
-                                                  replacement = " ")
-                         })
+      tmp <- read.xlsx(x, sheetIndex = 1)
+      tmp[,2:4] <- apply(tmp[,2:4], 2, iconv, from = "utf8", to = "ASCII//TRANSLIT")
+      tmp[,2:4] <- apply(tmp[,2:4], 2, function(x){
+        stri_replace_all_regex(x, "[-_]", replacement = " ")})
       
       colnames(tmp)[5] <- "EDAD"
       tmp %>%
@@ -30,13 +25,13 @@ minsa_load <- drake_plan(
         summarise(global = sum(CASOS),
                   suicidio = sum(suicidio),
                   transito = sum (transito)) -> tmp
-      tmp[tmp$PROVINCIA.RH == "LIMA",]$DEPARTAMENTO.RH <- "LIMA METROPOLITANA"
+      tmp[tmp$PROVINCIA.RH == "LIMA",]$DEPARTAMENTO.RH <- "LIMA PROVINCIA"
       tmp[tmp$DEPARTAMENTO.RH == "LIMA",]$DEPARTAMENTO.RH <- "LIMA REGION"
       tmp[tmp$PROVINCIA.RH == "NAZCA",]$PROVINCIA.RH <- "NASCA"
       tmp[tmp$DISTRITO.RH == "NAZCA",]$DISTRITO.RH <- "NASCA"
       tmp$SEXO <- ifelse(tmp$SEXO == "FEMENINO", "MUJER", "HOMBRE")
-      tmp
-    })(file_in("DATADIR__/minsa/Defunciones_11a19.xlsx")),
+      return(tmp)
+    })(file_in("D:/datasets/minsa/Defunciones_11a19.xlsx")),
   minsa.depre =
     (function(x){
       read.xlsx(x,
@@ -68,7 +63,7 @@ minsa_load <- drake_plan(
                           sexo = "HOMBRE", casos) -> tmp_m
       tmp <- bind_rows(tmp_f, tmp_m)
       
-      tmp[tmp$PROVINCIA == "LIMA",]$DEPARTAMENTO <- "LIMA METROPOLITANA"
+      tmp[tmp$PROVINCIA == "LIMA",]$DEPARTAMENTO <- "LIMA PROVINCIA"
       tmp[tmp$DEPARTAMENTO == "LIMA",]$DEPARTAMENTO <- "LIMA REGION"
       tmp[tmp$PROVINCIA == "ANTONIO RAIMONDI",]$PROVINCIA <- "ANTONIO RAYMONDI"
       tmp[tmp$PROVINCIA == "NAZCA",]$PROVINCIA <- "NASCA"
@@ -87,10 +82,6 @@ minsa_load <- drake_plan(
       tmp[tmp$DISTRITO == "CAPASO",]$DISTRITO <- "CAPAZO"
       tmp[tmp$DISTRITO == "RAIMONDI",]$DISTRITO <- "RAYMONDI"
       tmp[tmp$DISTRITO == "CORONEL GREGORIO ALBARRACIN L.",]$DISTRITO <- "CORONEL GREGORIO ALBARRACIN LANCHIPA"
-      tmp
-    })(file_in("DATADIR__/minsa/CASOS DE DEPRESION 2017.xlsx"))
-) %>%
-  evaluate_plan(
-    rules = list(DATADIR__ = datadir),
-    expand = FALSE
+      return(tmp)
+    })(file_in("D:/datasets/minsa/CASOS DE DEPRESION 2017.xlsx"))
 )
