@@ -111,6 +111,16 @@ putlabel <- function(x) {
   }
 }
 
+label_vals <- function(x, l = NULL){
+  if(is.null(l))stop("Missing label type")
+  if(l=="3regiones")return(
+    case_when(x == 1 ~ "Lima metropolitana",
+              x == 2 ~ "Resto Costa",
+              x == 3 ~ "Sierra",
+              x == 4 ~ "Selva")
+  )
+}
+
 # Transform svy mean and proportion CI estimate objects
 # into a simple 3-vector
 svy2pci <- function(x) {
@@ -304,7 +314,29 @@ rec0111_import <- function(path){
     setNames(., toupper(colnames(.))) %>%
     transmute(HHID = substr(CASEID, 1, 15), CASEID, V005, V013, V021, V022, V023, V025)
 }
-
+rech23_import <- function(path){
+  import(path, setclass = "data.table") %>%
+    setNames(., toupper(colnames(.))) %>%
+    transmute(HHID, SHREGION)
+}
+re223132_import <- function(path){
+  import(path, setclass = "data.table") %>%
+    setNames(., toupper(colnames(.))) %>%
+    transmute(CASEID, V206, V209, V364)
+}
+re516171_import <- function(path){
+  import(path, setclass = "data.table") %>%
+    setNames(., toupper(colnames(.))) %>%
+    transmute(CASEID, V511, V525)
+}
+csalud01_import <- function(path){
+  data.table(haven::read_sav( path, encoding = "latin1")) -> tmp
+  colnames(tmp)[which(colnames(tmp) %in% c("Peso_may15años", "PESO15_AJUS", "PESO15AÑOS"))] <- "PESO15_AMAS"
+  tmp %>%
+    setNames(., toupper(colnames(.))) %>%
+    transmute(HHID, PESO15_AMAS, QSSEXO, QS23,
+              QS200, QS201, QS206, QS208, QS209, QS210, QS710, QS711)
+}
 
 # PISA
 flt_conf <-

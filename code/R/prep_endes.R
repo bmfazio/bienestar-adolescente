@@ -58,16 +58,17 @@ endes_merge <- drake_plan(
   # Cuestionarios exclusivos para mujer
   endes_mujer = (
     rec0111 %>%
-      merge(rech23, by = "HHID") %>% # why no all.x = T?
-      merge(re223132, by = "CASEID", all.x = T) %>%
-      merge(re516171, by = "CASEID", all.x = T) %>%
-      merge(re758081, by = "CASEID", all.x = T) %>%
-      merge(rec42, by = "CASEID", all.x = T) %>%
-      merge(rec84dv, by = "CASEID", all.x = T)
-    )[,.(
+      left_join(rech23, by = "HHID") %>% # why no all.x = T?
+      left_join(re223132, by = "CASEID") %>%
+      left_join(re516171, by = "CASEID") %>%
+      left_join(re758081, by = "CASEID") %>%
+      left_join(rec42, by = "CASEID") %>%
+      left_join(rec84dv, by = "CASEID")
+    ) %>%
+    mutate(
       psuid = V021,
       peso = V005/10**6,
-      region = putlabel(SHREGION),
+      region = label_vals(SHREGION, "3regiones"),
       estrato.region = putlabel(V023),
       estrato.urbrur = V022,
       area = case_when(V025 == 1 ~ "URBANA", V025 == 2 ~ "RURAL"),
@@ -87,7 +88,7 @@ endes_merge <- drake_plan(
       edad.matri = V511,
       anemia = as.numeric(V457<4),
       imc = ifelse(V445 == 9998, NA, V445)
-      )] %>%
+    ) %>%
     mutate(
       region = case_when(
         estrato.region == "Lima" & region == "Lima metropolitana" ~ "LIMA PROVINCIA",
@@ -102,9 +103,11 @@ endes_merge <- drake_plan(
   # Cuestionarios de salud
   endes_salud = (
     csalud01 %>%
-      merge(rech23, by = "HHID") %>%
-      merge(rech0, by = "HHID", all.x = TRUE)
-    )[!is.na(PESO15_AMAS), .(
+      left_join(rech23, by = "HHID") %>%
+      left_join(rech0, by = "HHID")
+    ) %>%
+    filter(!is.na(PESO15_AMAS)) %>%
+    mutate(
       psuid = HV021,
       peso = PESO15_AMAS/10**6,
       region = putlabel(SHREGION),
@@ -145,7 +148,7 @@ endes_merge <- drake_plan(
           TRUE ~ NA_real_),
       v.golpe = as.numeric(QS710>1),
       v.arma = as.numeric(QS711>1)
-      )]%>%
+      ) %>%
     mutate(
       region = case_when(
         estrato.region == "Lima" & region == "Lima metropolitana" ~ "LIMA PROVINCIA",
