@@ -304,38 +304,50 @@ xlsx.addTitle <- function(sheet, rowI, title, titleStyle, colI = 1){
 source("R/modules/export_all.R")
 
 # ENDES
-rech0_import <- function(path){
+rech0_import <- function(path, y){
   import(path, setclass = "data.table") %>%
     setNames(., toupper(colnames(.))) %>%
-    select(HHID, HV021, HV022, HV023, HV025)
+    transmute(HHID = HHID%p0%"|"%p0%y, HV021 = HV021%p0%"|"%p0%y,
+              HV022, HV023, HV025)
 }
-rec0111_import <- function(path){
+rec0111_import <- function(path, y){
   import(path, setclass = "data.table") %>%
     setNames(., toupper(colnames(.))) %>%
-    transmute(HHID = substr(CASEID, 1, 15), CASEID, V005, V013, V021, V022, V023, V025)
+    transmute(HHID = substr(CASEID, 1, 15)%p0%"|"%p0%y, CASEID = CASEID%p0%"|"%p0%y,
+              V021 = V021%p0%"|"%p0%y, V005, V013, V022, V023, V025)
 }
-rech23_import <- function(path){
+rech23_import <- function(path, y){
   import(path, setclass = "data.table") %>%
     setNames(., toupper(colnames(.))) %>%
-    transmute(HHID, SHREGION)
+    transmute(HHID = HHID%p0%"|"%p0%y, SHREGION)
 }
-re223132_import <- function(path){
+re223132_import <- function(path, y){
   import(path, setclass = "data.table") %>%
     setNames(., toupper(colnames(.))) %>%
-    transmute(CASEID, V206, V209, V364)
+    transmute(CASEID = CASEID%p0%"|"%p0%y, V206, V209, V364)
 }
-re516171_import <- function(path){
+re516171_import <- function(path, y){
   import(path, setclass = "data.table") %>%
     setNames(., toupper(colnames(.))) %>%
-    transmute(CASEID, V511, V525)
+    transmute(CASEID = CASEID%p0%"|"%p0%y, V511, V525)
 }
-csalud01_import <- function(path){
+csalud01_import <- function(path, y){
   data.table(haven::read_sav( path, encoding = "latin1")) -> tmp
   colnames(tmp)[which(colnames(tmp) %in% c("Peso_may15años", "PESO15_AJUS", "PESO15AÑOS"))] <- "PESO15_AMAS"
   tmp %>%
     setNames(., toupper(colnames(.))) %>%
-    transmute(HHID, PESO15_AMAS, QSSEXO, QS23,
+    transmute(HHID = HHID%p0%"|"%p0%y, PESO15_AMAS, QSSEXO, QS23,
               QS200, QS201, QS206, QS208, QS209, QS210, QS710, QS711)
+}
+rec42_import <- function(path, y){
+  import(path, setclass = "data.table") %>%
+    setNames(., toupper(colnames(.))) %>%
+    transmute(CASEID = CASEID%p0%"|"%p0%y, V457, V445)
+}
+rec84dv_import <- function(path, y){
+  import(path, setclass = "data.table") %>%
+    setNames(., toupper(colnames(.))) %>%
+    transmute(CASEID = CASEID%p0%"|"%p0%y, D104, D106, D107, D108)
 }
 
 # PISA
