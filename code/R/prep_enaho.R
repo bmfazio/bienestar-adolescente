@@ -2,36 +2,57 @@
 # ID para persona   id = AÑO+CONGLOME+VIVIENDA+HOGAR+CODPERSO
 enaho_load <- drake_plan(
   # Modulo 200-Info basica de personas en el hogar
+  enaho01.200_2013 =
+    enaho01.200_import(file_in("INEIDIR__/enaho/2013/404-Modulo02/Enaho01-2013-200.sav"), 2013),
+  enaho01.200_2014 =
+    enaho01.200_import(file_in("INEIDIR__/enaho/2014/440-Modulo02/Enaho01-2014-200.sav"), 2014),
+  enaho01.200_2015 =
+    enaho01.200_import(file_in("INEIDIR__/enaho/2015/498-Modulo02/Enaho01-2015-200.sav"), 2015),
+  enaho01.200_2016 =
+    enaho01.200_import(file_in("INEIDIR__/enaho/2016/546-Modulo02/Enaho01-2016-200.sav"), 2016),
+  enaho01.200_2017 =
+    enaho01.200_import(file_in("INEIDIR__/enaho/2017/603-Modulo02/Enaho01-2017-200.sav"), 2017),
   enaho01.200 =
-    import(
-      file_in("INEIDIR__/enaho/2017/603-Modulo02/Enaho01-2017-200.sav")) %>%
-    mutate(
-      region = substr(UBIGEO, 1, 2),
-      hh = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR),
-      id = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR, CODPERSO)) %>%
-    as.data.table,
+    rbind(enaho01.200_2013, enaho01.200_2014, enaho01.200_2015, enaho01.200_2016, enaho01.200_2017),
   # Modulo 300-Educacion
+  enaho01.300_2013 =
+    enaho01.300_import(file_in("INEIDIR__/enaho/2013/404-Modulo03/Enaho01A-2013-300.sav")),
+  enaho01.300_2014 =
+    enaho01.300_import(file_in("INEIDIR__/enaho/2014/440-Modulo03/Enaho01A-2014-300.sav")),
+  enaho01.300_2015 =
+    enaho01.300_import(file_in("INEIDIR__/enaho/2015/498-Modulo03/Enaho01A-2015-300.sav")),
+  enaho01.300_2016 =
+    enaho01.300_import(file_in("INEIDIR__/enaho/2016/546-Modulo03/Enaho01A-2016-300.sav")),
+  enaho01.300_2017 =
+    enaho01.300_import(file_in("INEIDIR__/enaho/2017/603-Modulo03/Enaho01A-2017-300.sav")),
   enaho01a.300 =
-    import(
-      file_in("INEIDIR__/enaho/2017/603-Modulo03/Enaho01A-2017-300.sav")) %>%
-    mutate(
-      hh = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR),
-      id = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR, CODPERSO)) %>%
-    as.data.table,
+    rbind(enaho01.300_2013, enaho01.300_2014, enaho01.300_2015, enaho01.300_2016, enaho01.300_2017),
   # Modulo 500-Trabajo
+  enaho01.500_2013 =
+    enaho01.500_import(file_in("INEIDIR__/enaho/2013/404-Modulo05/Enaho01A-2013-500.sav")),
+  enaho01.500_2014 =
+    enaho01.500_import(file_in("INEIDIR__/enaho/2014/440-Modulo05/Enaho01A-2014-500.sav")),
+  enaho01.500_2015 =
+    enaho01.500_import(file_in("INEIDIR__/enaho/2015/498-Modulo05/Enaho01A-2015-500.sav")),
+  enaho01.500_2016 =
+    enaho01.500_import(file_in("INEIDIR__/enaho/2016/546-Modulo05/Enaho01A-2016-500.sav")),
+  enaho01.500_2017 =
+    enaho01.500_import(file_in("INEIDIR__/enaho/2017/603-Modulo05/Enaho01A-2017-500.sav")),
   enaho01a.500 =
-    import(
-      file_in("INEIDIR__/enaho/2017/603-Modulo05/Enaho01A-2017-500.sav")) %>%
-    mutate(
-      hh = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR),
-      id = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR, CODPERSO)) %>%
-    as.data.table,
+    rbind(enaho01.500_2013, enaho01.500_2014, enaho01.500_2015, enaho01.500_2016, enaho01.500_2017),
   # Sumaria - Cantidades calculadas por hogar (nivel de pobreza)
+  enaho.sumaria_2013 =
+    enaho.sumaria_import(file_in("INEIDIR__/enaho/2013/404-Modulo34/Sumaria-2013.sav")),
+  enaho.sumaria_2014 =
+    enaho.sumaria_import(file_in("INEIDIR__/enaho/2014/440-Modulo34/Sumaria-2014.sav")),
+  enaho.sumaria_2015 =
+    enaho.sumaria_import(file_in("INEIDIR__/enaho/2015/498-Modulo34/Sumaria-2015.sav")),
+  enaho.sumaria_2016 =
+    enaho.sumaria_import(file_in("INEIDIR__/enaho/2016/546-Modulo34/Sumaria-2016.sav")),
+  enaho.sumaria_2017 =
+    enaho.sumaria_import(file_in("INEIDIR__/enaho/2017/603-Modulo34/Sumaria-2017.sav")),
   enaho.sumaria =
-    import(file_in("INEIDIR__/enaho/2017/603-Modulo34/Sumaria-2017.sav")) %>%
-    mutate(
-      hh = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR)) %>%
-    as.data.table
+    rbind(enaho.sumaria_2013, enaho.sumaria_2014, enaho.sumaria_2015, enaho.sumaria_2016, enaho.sumaria_2017)
 ) %>%
   evaluate_plan(
     rules = list(INEIDIR__ = ineidir),

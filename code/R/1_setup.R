@@ -331,6 +331,11 @@ re516171_import <- function(path, y){
     setNames(., toupper(colnames(.))) %>%
     transmute(CASEID = CASEID%p0%"|"%p0%y, V511, V525)
 }
+re758081_import <- function(path, y){
+  import(path, setclass = "data.table") %>%
+    setNames(., toupper(colnames(.))) %>%
+    transmute(CASEID = CASEID%p0%"|"%p0%y, V761)
+}
 csalud01_import <- function(path, y){
   data.table(haven::read_sav( path, encoding = "latin1")) -> tmp
   colnames(tmp)[which(colnames(tmp) %in% c("Peso_may15años", "PESO15_AJUS", "PESO15AÑOS"))] <- "PESO15_AMAS"
@@ -348,6 +353,40 @@ rec84dv_import <- function(path, y){
   import(path, setclass = "data.table") %>%
     setNames(., toupper(colnames(.))) %>%
     transmute(CASEID = CASEID%p0%"|"%p0%y, D104, D106, D107, D108)
+}
+# ENAHO
+enaho01.200_import <- function(path, y){
+    import(path) %>%
+    transmute(
+      region = substr(UBIGEO, 1, 2),
+      hh = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR),
+      id = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR, CODPERSO),
+      CONGLOME = CONGLOME%p0%"|"%p0%y,
+      DOMINIO, ESTRATO, FACPOB07, P208A, P207, P210, P211A, P211D
+      ) %>%
+    as.data.table
+}
+enaho01.300_import <- function(path){
+    import(path) %>%
+    transmute(
+      id = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR, CODPERSO),
+      P300A, P302, P302X, P301A, P304A, P308A, P313, P306, P314A
+      ) %>%
+    as.data.table
+}
+enaho01.500_import <- function(path){
+    import(path) %>%
+    transmute(
+      id = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR, CODPERSO),
+      P501, P502, P503, P5041, P5042, P5043, P5044, P5045, P5046,
+      P5047, P5048, P5049, P50410, P50411, P513T, P518, P520, P545, P546
+      ) %>%
+    as.data.table
+}
+enaho.sumaria_import <- function(path){
+    import(path) %>%
+    transmute(hh = paste0(`AÑO`, CONGLOME, VIVIENDA, HOGAR), POBREZA) %>%
+    as.data.table
 }
 
 # PISA

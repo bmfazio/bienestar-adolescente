@@ -57,6 +57,17 @@ endes_load <- drake_plan(
   re516171_2017 =
     re516171_import(file_in("INEIDIR__/endes/2017/Modulo71/RE516171.SAV"), 2017),
   re516171 = rbind(re516171_2013, re516171_2014, re516171_2015, re516171_2016, re516171_2017),
+  re758081_2013 =
+    re758081_import(file_in("INEIDIR__/endes/2013/407-Modulo72/RE758081.SAV"), 2013),
+  re758081_2014 =
+    re758081_import(file_in("INEIDIR__/endes/2014/441-Modulo72/RE758081.SAV"), 2014),
+  re758081_2015 =
+    re758081_import(file_in("INEIDIR__/endes/2015/504-Modulo72/RE758081.SAV"), 2015),
+  re758081_2016 =
+    re758081_import(file_in("INEIDIR__/endes/2016/548-Modulo72/RE758081.SAV"), 2016),
+  re758081_2017 =
+    re758081_import(file_in("INEIDIR__/endes/2017/Modulo72/RE758081.SAV"), 2017),
+  re758081 = rbind(re758081_2013, re758081_2014, re758081_2015, re758081_2016, re758081_2017),
   # Cuestionario de Salud
   csalud01_2013 =
     csalud01_import(file_in("INEIDIR__/endes/2013/407-Modulo414/CSALUD01.sav"), 2013),
